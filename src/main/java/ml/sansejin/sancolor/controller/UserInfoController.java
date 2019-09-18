@@ -1,7 +1,7 @@
 package ml.sansejin.sancolor.controller;
 
 import io.swagger.annotations.ApiOperation;
-import ml.sansejin.sancolor.entity.UserInfo;
+import ml.sansejin.sancolor.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +16,7 @@ public class UserInfoController {
      */
     @ApiOperation("添加一个用户")
     @PostMapping("")
-    public boolean addUserInfo(@RequestBody UserInfo userInfo){
-
+    public boolean addUserInfo(@RequestBody User userInfo){
         return true;
     }
 
@@ -33,7 +32,7 @@ public class UserInfoController {
 
     @ApiOperation("更新用户资料")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUerInfo(@PathVariable long id, @RequestBody UserInfo userInfo){
+    public ResponseEntity<Void> updateUerInfo(@PathVariable long id, @RequestBody User userInfo){
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -2,7 +2,7 @@ package ml.sansejin.sancolor.entity;
 
 import java.util.Date;
 
-public class SysView {
+public class SysVisit {
     private Long id;
 
     private String ip;

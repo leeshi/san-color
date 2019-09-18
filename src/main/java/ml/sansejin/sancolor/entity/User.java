@@ -2,7 +2,7 @@ package ml.sansejin.sancolor.entity;
 
 import java.util.Date;
 
-public class UserInfo {
+public class User {
     private Integer id;
 
     private String password;

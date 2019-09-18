@@ -2,16 +2,20 @@ package ml.sansejin.sancolor.entity;
 
 import java.util.Date;
 
-public class CategoryInfo {
+public class Article {
     private Long id;
 
     private Date create_by;
 
     private Date modified_by;
 
-    private String name;
+    private String summary;
 
-    private Integer number;
+    private String title;
+
+    private Integer traffic;
+
+    private Integer visibillity;
 
     private Boolean is_effective;
 
@@ -39,20 +43,36 @@ public class CategoryInfo {
         this.modified_by = modified_by;
     }
 
-    public String getName() {
-        return name;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setSummary(String summary) {
+        this.summary = summary == null ? null : summary.trim();
     }
 
-    public Integer getNumber() {
-        return number;
+    public String getTitle() {
+        return title;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setTitle(String title) {
+        this.title = title == null ? null : title.trim();
+    }
+
+    public Integer getTraffic() {
+        return traffic;
+    }
+
+    public void setTraffic(Integer traffic) {
+        this.traffic = traffic;
+    }
+
+    public Integer getVisibillity() {
+        return visibillity;
+    }
+
+    public void setVisibillity(Integer visibillity) {
+        this.visibillity = visibillity;
     }
 
     public Boolean getIs_effective() {

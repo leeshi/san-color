@@ -45,7 +45,7 @@
         </table>
 
 
-        <table tableName="sys_visit" domainObjectName="SysView" enableCountByExample="false"
+        <table tableName="sys_visit" domainObjectName="SysVisit" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
@@ -63,7 +63,7 @@
         </table>
 
 
-        <table tableName="tbl_article_info" domainObjectName="ArticleInfo" enableCountByExample="false"
+        <table tableName="tbl_article_info" domainObjectName="Article" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
@@ -106,7 +106,7 @@
         </table>
 
 
-        <table tableName="tbl_category_info" domainObjectName="CategoryInfo" enableCountByExample="false"
+        <table tableName="tbl_category_info" domainObjectName="Category" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
@@ -124,7 +124,7 @@
         </table>
 
 
-        <table tableName="tbl_user_info" domainObjectName="UserInfo" enableCountByExample="false"
+        <table tableName="tbl_user_info" domainObjectName="User" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
