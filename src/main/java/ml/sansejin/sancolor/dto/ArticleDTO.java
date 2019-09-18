@@ -20,11 +20,6 @@ public class ArticleDTO {
     private Long userId;
     private String userName;
 
-    //tbl_article_category基础字段
-    private Long categoryId;
-    private Integer categoryNumber;
-    private String categoryName;
-
     //tbl_article_content基础字段
     private Long articleContentId;
     private String content;
@@ -32,14 +27,6 @@ public class ArticleDTO {
     //tbl_article_picture基础字段
     private Long articlePictureId;
     private String pictureUrl;
-
-    public Integer getCategoryNumber() {
-        return categoryNumber;
-    }
-
-    public void setCategoryNumber(Integer categoryNumber) {
-        this.categoryNumber = categoryNumber;
-    }
 
     public Long getArticlePictureId() {
         return articlePictureId;
@@ -119,22 +106,6 @@ public class ArticleDTO {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
     }
 
     public Long getArticleContentId() {

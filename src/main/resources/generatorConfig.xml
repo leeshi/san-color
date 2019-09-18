@@ -72,7 +72,7 @@
         </table>
 
 
-        <table tableName="tbl_article_comment" domainObjectName="ArticleComment" enableCountByExample="false"
+        <table tableName="tbl_comment_article" domainObjectName="ArticleComment" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
@@ -86,6 +86,7 @@
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
             <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
 
 
@@ -94,6 +95,7 @@
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
             <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
 
 
@@ -129,6 +131,7 @@
                selectByExampleQueryId="false">
             <property name="my.isgen.usekeys" value="true"/>
             <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
 
     </context>

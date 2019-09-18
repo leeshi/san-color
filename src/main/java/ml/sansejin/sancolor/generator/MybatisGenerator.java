@@ -15,12 +15,12 @@ import java.util.List;
  * MyBatis逆向工程生成类
  *
  * @author:lishi
- * @create:2019-09-16 08:06pm
+ * @create:2019-09-18 09:06pm
  */
 public class MybatisGenerator {
 
     public static void main(String[] args) throws Exception {
-        String today = "2019-09-17";
+        String today = "2019-09-18";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date now = sdf.parse(today);

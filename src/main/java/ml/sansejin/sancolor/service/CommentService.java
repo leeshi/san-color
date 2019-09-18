@@ -17,6 +17,8 @@ public interface CommentService {
 
     boolean deleteCommentById(Long id);
 
+    int getCommentCountByArticleId(Long id);
+
     //通过某一篇文章的id来指定显示所有的comment
     List<ArticleCommentDTO> listAllCommentsByArticleId(Long id);
 }
