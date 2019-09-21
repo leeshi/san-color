@@ -1,5 +1,7 @@
 package ml.sansejin.sancolor.service.impl;
 
+import ml.sansejin.sancolor.dao.ArticleCategoryMapper;
+import ml.sansejin.sancolor.dao.CategoryMapper;
 import ml.sansejin.sancolor.dto.ArticleCategoryDTO;
 import ml.sansejin.sancolor.dto.CategoryDTO;
 import ml.sansejin.sancolor.entity.ArticleCategory;
@@ -21,7 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryMapper categoryMapper;
 
     @Resource
-    private ArticleCategoryDTO articleCategoryDTO;
+    private ArticleCategoryMapper articleCategoryMapper;
 
     @Override
     public boolean addCategory(CategoryDTO categoryDTO) {

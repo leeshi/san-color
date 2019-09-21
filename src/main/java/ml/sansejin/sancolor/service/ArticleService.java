@@ -17,7 +17,7 @@ public interface ArticleService {
     boolean updateArticle(ArticleDTO articleDTO);
 
     //更新文章分类
-    boolean updateArticleCategory(Long articleId, Long categoryId);
+    boolean updateArticleCategory(Long articleId, List<Long> categoryIds);
 
     boolean updateArticlePicture(Long articleId, String pictureUrl);
 

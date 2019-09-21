@@ -1,5 +1,7 @@
 package ml.sansejin.sancolor.service.impl;
 
+import ml.sansejin.sancolor.dao.ArticleCommentMapper;
+import ml.sansejin.sancolor.dao.CommentMapper;
 import ml.sansejin.sancolor.dto.ArticleCommentDTO;
 import ml.sansejin.sancolor.service.CommentService;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,9 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
     @Resource
     private CommentMapper commentMapper;
+
+    @Resource
+    private ArticleCommentMapper articleCommentMapper;
 
     @Override
     public boolean addComment(ArticleCommentDTO articleCommentDTO) {

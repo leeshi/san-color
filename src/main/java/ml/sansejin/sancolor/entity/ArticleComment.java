@@ -2,7 +2,7 @@ package ml.sansejin.sancolor.entity;
 
 import java.util.Date;
 
-public class ArticleContent {
+public class ArticleComment {
     private Long id;
 
     private Date create_by;
@@ -11,7 +11,9 @@ public class ArticleContent {
 
     private Long article_id;
 
-    private String content;
+    private Long comment_id;
+
+    private Boolean is_effective;
 
     public Long getId() {
         return id;
@@ -45,11 +47,19 @@ public class ArticleContent {
         this.article_id = article_id;
     }
 
-    public String getContent() {
-        return content;
+    public Long getComment_id() {
+        return comment_id;
     }
 
-    public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
+    public void setComment_id(Long comment_id) {
+        this.comment_id = comment_id;
+    }
+
+    public Boolean getIs_effective() {
+        return is_effective;
+    }
+
+    public void setIs_effective(Boolean is_effective) {
+        this.is_effective = is_effective;
     }
 }

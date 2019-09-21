@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ArticleContentExample {
+public class ArticleCommentExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public ArticleContentExample() {
+    public ArticleCommentExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -342,6 +342,126 @@ public class ArticleContentExample {
 
         public Criteria andArticle_idNotBetween(Long value1, Long value2) {
             addCriterion("article_id not between", value1, value2, "article_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idIsNull() {
+            addCriterion("comment_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idIsNotNull() {
+            addCriterion("comment_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idEqualTo(Long value) {
+            addCriterion("comment_id =", value, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idNotEqualTo(Long value) {
+            addCriterion("comment_id <>", value, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idGreaterThan(Long value) {
+            addCriterion("comment_id >", value, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idGreaterThanOrEqualTo(Long value) {
+            addCriterion("comment_id >=", value, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idLessThan(Long value) {
+            addCriterion("comment_id <", value, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idLessThanOrEqualTo(Long value) {
+            addCriterion("comment_id <=", value, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idIn(List<Long> values) {
+            addCriterion("comment_id in", values, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idNotIn(List<Long> values) {
+            addCriterion("comment_id not in", values, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idBetween(Long value1, Long value2) {
+            addCriterion("comment_id between", value1, value2, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andComment_idNotBetween(Long value1, Long value2) {
+            addCriterion("comment_id not between", value1, value2, "comment_id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveIsNull() {
+            addCriterion("is_effective is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveIsNotNull() {
+            addCriterion("is_effective is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveEqualTo(Boolean value) {
+            addCriterion("is_effective =", value, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveNotEqualTo(Boolean value) {
+            addCriterion("is_effective <>", value, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveGreaterThan(Boolean value) {
+            addCriterion("is_effective >", value, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("is_effective >=", value, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveLessThan(Boolean value) {
+            addCriterion("is_effective <", value, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveLessThanOrEqualTo(Boolean value) {
+            addCriterion("is_effective <=", value, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveIn(List<Boolean> values) {
+            addCriterion("is_effective in", values, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveNotIn(List<Boolean> values) {
+            addCriterion("is_effective not in", values, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_effective between", value1, value2, "is_effective");
+            return (Criteria) this;
+        }
+
+        public Criteria andIs_effectiveNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_effective not between", value1, value2, "is_effective");
             return (Criteria) this;
         }
     }

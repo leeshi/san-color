@@ -12,9 +12,10 @@ public class ArticleDTO {
     private String summary;
     private String title;
     private Integer visibillity;
+    private Integer traffic;
     private Boolean effective;
     private Date createBy;
-
+    private Date modifiedBy;
 
     //tbl_article_user基础字段
     private Long userId;
@@ -27,6 +28,24 @@ public class ArticleDTO {
     //tbl_article_picture基础字段
     private Long articlePictureId;
     private String pictureUrl;
+
+
+    public Integer getTraffic() {
+        return traffic;
+    }
+
+    public void setTraffic(Integer traffic) {
+        this.traffic = traffic;
+    }
+
+    public Date getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(Date modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
 
     public Long getArticlePictureId() {
         return articlePictureId;

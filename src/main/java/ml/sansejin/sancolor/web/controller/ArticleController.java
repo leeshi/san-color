@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author sansejin
  * @className ArticleController
@@ -14,6 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/article")
 public class ArticleController extends BaseController {
+
+    @GetMapping(value = "/", produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<List<ArticleDTO>> fetchAllArticles(){
+        List<ArticleDTO> listArticleDTO = articleService.listLatesetArticles();
+
+        return new ResponseEntity<>(listArticleDTO, HttpStatus.OK);
+    }
 
     /**
      * 获取一篇文章
@@ -50,7 +59,7 @@ public class ArticleController extends BaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(value = "",produces = {"application/json;charset=UTF-8"})
+    @PutMapping(value = "/",produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> updateArticle(@RequestBody ArticleDTO articleDTO){
         articleService.updateArticle(articleDTO);
 
