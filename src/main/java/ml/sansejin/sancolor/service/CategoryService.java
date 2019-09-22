@@ -9,12 +9,14 @@ import java.util.List;
 public interface CategoryService {
     boolean addCategory(CategoryDTO categoryDTO);
 
-    boolean updateCategory(CategoryDTO categoryDTO);
+    boolean updateCategory(Long categoryId, CategoryDTO categoryDTO);
 
     //更新一个新的文章归类
-    boolean updateArticleCategory(ArticleCategory articleCategory);
+    boolean updateArticleCategory(Long articleId, List<Long> listCategoryId);
 
     boolean deleteCategoryById(Long id);
+
+    boolean ifCategoryExit(Long categoryId);
 
     CategoryDTO getCategoryById(Long id);
 

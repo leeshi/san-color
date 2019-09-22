@@ -177,14 +177,14 @@ public class ArticleServiceImpl implements ArticleService {
         return true;
     }
 
-    /**
+/*    *//**
      * 更新文章的分类信息，因为一篇文章可以属于多个分类，所以会有多条记录.所以本函数首先删除同一篇文章的所有分类
      *      然后逐个添加
      * @param articleId
      * @param listCategoryId
      * @return boolean
      * @implNote 预计的api思路为，前端一次性发送所有文章对应的分类，其余问题由后端自行处理
-     */
+     *//*
     @Override
     @Transactional
     public boolean updateArticleCategory(Long articleId, List<Long> listCategoryId) {
@@ -203,7 +203,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return true;
-    }
+    }*/
 
 
     /**
@@ -226,6 +226,15 @@ public class ArticleServiceImpl implements ArticleService {
         articlePictureMapper.updateByExample(articlePicture, example);
 
         return true;
+    }
+
+    @Override
+    public boolean ifArticleExit(Long articleId) {
+        if (articleMapper.selectByPrimaryKey(articleId) == null){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**
