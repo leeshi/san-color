@@ -37,6 +37,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Resource
     private ArticleContentMapper articleContentMapper;
 
+    @Resource
+    private ArticleCommentMapper articleCommentMapper;
+
     /**
      * 添加一篇文章，主要与其他表之间的关系
      * @param articleDTO
@@ -46,48 +49,104 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public boolean addArticle(@NotNull ArticleDTO articleDTO) {
 
+        //------------------------插入tbl_article_info 记录--------------------------------
         Article article = new Article();
 
         article.setSummary(articleDTO.getSummary());
         article.setTitle(articleDTO.getTitle());
         article.setVisibillity(articleDTO.getVisibillity());
+        article.setCreate_by(new Date());
 
         System.out.println(article);
 
+        articleMapper.insertSelective(article);
+
+        //先获取一个Example，然后再去进行查找
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andCreate_byEqualTo(article.getCreate_by()).andTitleEqualTo(article.getTitle());
+
+        //搜寻具有相同信息的记录
+        List<Article> listArticle = articleMapper.selectByExample(articleExample);
+        if(listArticle.isEmpty()){
+            return false;
+        }
+
+        article = listArticle.get(0);
+
+
+        //------------------------插入tbl_article_content 记录----------------------------
         ArticleContent articleContent = new ArticleContent();
         articleContent.setContent(articleDTO.getContent());
         //tbl_article_content 中id直接与tbl_article_info 中的id相同
-        articleContent.setArticle_id(articleDTO.getId());
+        articleContent.setArticle_id(article.getId());
 
         articleContentMapper.insertSelective(articleContent);
 
+        //------------------------插入tbl_article_user 记录--------------------------------
+        ArticleUser articleUser = new ArticleUser();
+        articleUser.setArticle_id(article.getId());
+        articleUser.setUser_id(articleDTO.getUserId());
+        articleUser.setCreate_by(new Date());
+
+        articleUserMapper.insertSelective(articleUser);
+
+        //------------------------插入tbl_article_pic 记录---------------------------------
         //如果图片地址不为空
         if(articleDTO.getPictureUrl().equals("")){
             ArticlePicture articlePicture = new ArticlePicture();
 
-            articlePicture.setAtricle_id(articleDTO.getId());
+            articlePicture.setAtricle_id(article.getId());
             articlePicture.setPicture_url(articleDTO.getPictureUrl());
 
             articlePictureMapper.insert(articlePicture);
         }
 
-        if(articleMapper.insertSelective(article) != 0) {
-            return true;
-        }else{
-            return false;
-        }
+        return true;
 
     }
 
     /**
      * 根据id删除一篇文章
      * @param id
-     * @return
+     * @return boolean
      */
     @Override
     @Transactional
     public boolean deleteArticleById(Long id) {
+        //-----------------------删除tbl_article_info 记录----------------------
         articleMapper.deleteByPrimaryKey(id);
+
+        //-----------------------删除tbl_article_user 记录----------------------
+        ArticleUserExample articleUserExample = new ArticleUserExample();
+        articleUserExample.createCriteria().andArticle_idEqualTo(id);
+
+        articleUserMapper.deleteByExample(articleUserExample);
+
+        //-----------------------删除tbl_article_pic 记录-----------------------
+        ArticlePictureExample articlePictureExample = new ArticlePictureExample();
+        articlePictureExample.createCriteria().andAtricle_idEqualTo(id);
+
+        articlePictureMapper.deleteByExample(articlePictureExample);
+
+        //-----------------------删除tbl_article_category 记录------------------
+        ArticleCategoryExample articleCategoryExample = new ArticleCategoryExample();
+        articleCategoryExample.createCriteria().andArticle_idEqualTo(id);
+
+        articleCategoryMapper.deleteByExample(articleCategoryExample);
+
+        //-----------------------删除tbl_article_content 记录-------------------
+        ArticleContentExample articleContentExample = new ArticleContentExample();
+        articleCategoryExample.createCriteria().andArticle_idEqualTo(id);
+
+        articleContentMapper.deleteByExample(articleContentExample);
+
+        //TODO 是否需要保留评论，或者标记文章已经被删除
+        //·----------------------删除tbl_article_comment 记录-------------------
+        ArticleCommentExample articleCommentExample = new ArticleCommentExample();
+        articleCommentExample.createCriteria().andArticle_idEqualTo(id);
+
+        articleCommentMapper.deleteByExample(articleCommentExample);
+
         return true;
     }
 
@@ -95,6 +154,7 @@ public class ArticleServiceImpl implements ArticleService {
      * 通过ArticleDTO更新article表的信息
      * @param articleDTO
      * @return boolean
+     * @implNote 仅仅更新tbl_article_info 表的数据，其他表的数据更新需要调用其他接口
      */
     @Override
     @Transactional
@@ -248,7 +308,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * 获取最新的文章DTO
-     * TODO 当前只是一个调用listAllArticles的空壳
      * @return List<ArticleDTO>
      */
     @Override

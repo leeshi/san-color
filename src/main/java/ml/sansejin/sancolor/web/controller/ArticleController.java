@@ -1,6 +1,7 @@
 package ml.sansejin.sancolor.web.controller;
 
 import ml.sansejin.sancolor.dto.ArticleDTO;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +17,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/article")
 public class ArticleController extends BaseController {
+    private static final Logger logger = Logger.getLogger(ArticleController.class);
 
     @GetMapping(value = "/", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<List<ArticleDTO>> fetchAllArticles(){
         List<ArticleDTO> listArticleDTO = articleService.listLatesetArticles();
-
+        logger.info("Fetch all articles");
         return new ResponseEntity<>(listArticleDTO, HttpStatus.OK);
     }
 
@@ -35,8 +37,10 @@ public class ArticleController extends BaseController {
 
         //注意是否是空对象
         if(articleDTO != null) {
+            logger.info(String.format("Article found! ID: %d", articleId));
             return new ResponseEntity<>(articleDTO, HttpStatus.OK);
         }else{
+            logger.info(String.format("Article not found! ID: %d", articleId));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -49,12 +53,15 @@ public class ArticleController extends BaseController {
     @PostMapping(value = "/", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> addArticle(@RequestBody ArticleDTO articleDTO){
         articleService.addArticle(articleDTO);
+        logger.info(String.format("Add an article! Title:%s", articleDTO.getTitle()));
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{articleId}")
     public ResponseEntity<Void> deleteArticle(@PathVariable Long articleId){
         articleService.deleteArticleById(articleId);
+        logger.info(String.format("Delete an article! ID:%d", articleId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -62,6 +69,7 @@ public class ArticleController extends BaseController {
     @PutMapping(value = "/",produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> updateArticle(@RequestBody ArticleDTO articleDTO){
         articleService.updateArticle(articleDTO);
+        logger.info(String.format("Update an article! ID:%d", articleDTO.getId()));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
