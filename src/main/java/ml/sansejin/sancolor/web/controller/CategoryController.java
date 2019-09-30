@@ -1,6 +1,5 @@
 package ml.sansejin.sancolor.web.controller;
 
-import ml.sansejin.sancolor.dto.ArticleCategoryDTO;
 import ml.sansejin.sancolor.dto.CategoryDTO;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;

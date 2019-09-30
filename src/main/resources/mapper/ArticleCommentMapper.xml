@@ -38,6 +38,7 @@
       </foreach>
     </where>
   </sql>
+
   <sql id="Update_By_Example_Where_Clause">
     <where>
       <foreach collection="example.oredCriteria" item="criteria" separator="or">
@@ -212,4 +213,15 @@
       is_effective = #{is_effective,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--用户自定义-->
+  <select id="selectCountByArticleId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+    SELECT COUNT(*) FROM tbl_comment_article WHERE article_id=#{articleId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tbl_comment_article
+  </select>
 </mapper>

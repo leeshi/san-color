@@ -21,4 +21,6 @@ public interface CommentService {
 
     //通过某一篇文章的id来指定显示所有的comment
     List<ArticleCommentDTO> listAllCommentsByArticleId(Long id);
+
+    List<ArticleCommentDTO> listAllComments();
 }

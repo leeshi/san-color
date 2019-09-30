@@ -1,5 +1,7 @@
 package ml.sansejin.sancolor.dto;
 
+import java.util.Date;
+
 /**
  * 说明：通过某一篇文章获取全部的评论详细信息  该类对应的Api是 /api/comment/article/{id}
  * @author sansejin
@@ -12,6 +14,26 @@ public class ArticleCommentDTO {
     private String userName; //用户名
     private String email;
     private String ip;
+
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
+
+    private Boolean visible;
+
+    public Date getCommentCreateBy() {
+        return commentCreateBy;
+    }
+
+    public void setCommentCreateBy(Date commentCreateBy) {
+        this.commentCreateBy = commentCreateBy;
+    }
+
+    private Date commentCreateBy;
 
     //tbl_comment_article基础字段
     private Long articleCommentId;

@@ -16,6 +16,8 @@ public interface ArticleCommentMapper {
 
     List<ArticleComment> selectByExample(ArticleCommentExample example);
 
+    List<ArticleComment> selectAll();
+
     ArticleComment selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") ArticleComment record, @Param("example") ArticleCommentExample example);
@@ -25,4 +27,6 @@ public interface ArticleCommentMapper {
     int updateByPrimaryKeySelective(ArticleComment record);
 
     int updateByPrimaryKey(ArticleComment record);
+
+    int selectCountByArticleId(Long articleId);
 }
