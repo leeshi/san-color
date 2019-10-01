@@ -1,13 +1,11 @@
 package ml.sansejin.sancolor.web.controller;
 
-import io.swagger.models.auth.In;
 import ml.sansejin.sancolor.dto.ArticleCommentDTO;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,9 +22,10 @@ public class CommentController extends BaseController{
 
     @GetMapping(value = "/")
     public ResponseEntity<List<ArticleCommentDTO>> fetchAllComments() {
-        List<ArticleCommentDTO> listArticleCommentDTO = new ArrayList<>();
+        List<ArticleCommentDTO> listArticleCommentDTO;
 
         listArticleCommentDTO = commentService.listAllComments();
+        logger.info("Fetch all comments");
 
         return new ResponseEntity<>(listArticleCommentDTO, HttpStatus.OK);
     }
@@ -35,6 +34,7 @@ public class CommentController extends BaseController{
     public ResponseEntity<Integer> fetchCountOfArticle(@PathVariable Long articleId) {
         Integer count = commentService.getCommentCountByArticleId(articleId);
 
+        logger.info(String.format("Fetch count of comments of specific article! ID:%d", articleId));
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
@@ -42,33 +42,62 @@ public class CommentController extends BaseController{
     public ResponseEntity<List<ArticleCommentDTO>> fetchCommentByArticleId(@PathVariable Long articleId) {
         List<ArticleCommentDTO> listArticleCommentDTO = commentService.listAllCommentsByArticleId(articleId);
 
+
         if (listArticleCommentDTO.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            logger.info(String.format("No comment of specific article! ID:%d", articleId));
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else {
+            logger.info(String.format("Fetch comments of specific article! ID:%d", articleId));
+
             return new ResponseEntity<>(listArticleCommentDTO, HttpStatus.OK);
         }
     }
 
     @PostMapping(value = "/")
     public ResponseEntity<Void> addComment(@RequestBody ArticleCommentDTO articleCommentDTO) {
-        commentService.addComment(articleCommentDTO);
+        try{
+            commentService.addComment(articleCommentDTO);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+            logger.info(String.format("Add a comment! Comment:%s, ArticleId:%d", articleCommentDTO.getContent(), articleCommentDTO.getArticleId()));
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e){
+            //如果不存在对应的comment或者article，就会返回异常码
+            logger.error(String.format("Trying to add a comment to article not exits! ArticleID:%d", articleCommentDTO.getArticleId()));
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @PutMapping(value = "/{commentId}")
     public ResponseEntity<Void> updateComment(@PathVariable Long commentId, @RequestBody ArticleCommentDTO articleCommentDTO) {
-        articleCommentDTO.setCommentId(commentId);
+        try {
+            articleCommentDTO.setCommentId(commentId);
 
-        commentService.updateComment(articleCommentDTO);
+            commentService.updateComment(articleCommentDTO);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+            logger.info(String.format("Update a comment! ID:%d", commentId));
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e){
+            logger.error(String.format("Trying to add a comment to article not exits! ArticleID:%d", articleCommentDTO.getArticleId()));
+
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @DeleteMapping(value = "/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-        commentService.deleteCommentById(commentId);
+        boolean rs = commentService.deleteCommentById(commentId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (rs) {
+            logger.info(String.format("Delete a comment! ID:%d", commentId));
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            logger.error(String.format("Trying to add a comment to comment not exits! CommentID:%d", commentId));
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

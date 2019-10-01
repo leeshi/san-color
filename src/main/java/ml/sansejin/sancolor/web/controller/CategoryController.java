@@ -84,7 +84,7 @@ public class CategoryController extends BaseController {
 
     @PutMapping(value = "/article/{articleId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> updateArticleCategory(@PathVariable Long articleId, @RequestBody List<Long> listCategoryId){
-        if (!articleService.ifArticleExit(articleId)){
+        if (!articleService.isArticleExit(articleId)){
             logger.info(String.format("Article not found! ID: %d", articleId));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

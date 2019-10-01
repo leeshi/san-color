@@ -229,7 +229,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean ifArticleExit(Long articleId) {
+    public boolean isArticleExit(Long articleId) {
         if (articleMapper.selectByPrimaryKey(articleId) == null){
             return false;
         }else{
@@ -340,4 +340,5 @@ public class ArticleServiceImpl implements ArticleService {
 
         return listArticleDTO;
     }
+
 }

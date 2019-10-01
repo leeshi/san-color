@@ -86,11 +86,13 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public boolean deleteCommentById(Long commentId) {
+        //删除 tbl_comment_article 记录
         ArticleCommentExample articleCommentExample = new ArticleCommentExample();
 
         articleCommentExample.createCriteria().andComment_idEqualTo(commentId);
 
         articleCommentMapper.deleteByExample(articleCommentExample);
+        //删除 tbl_comment_info 记录
         commentMapper.deleteByPrimaryKey(commentId);
 
         return true;
@@ -112,7 +114,13 @@ public class CommentServiceImpl implements CommentService {
         List<ArticleComment> listArticleComment = articleCommentMapper.selectByExample(articleCommentExample);
 
         for (ArticleComment articleComment : listArticleComment) {
+
             Comment comment = commentMapper.selectByPrimaryKey(articleComment.getId());
+
+            //如果不可见，就不返回该评论
+            if (!comment.getIs_visiable()) {
+                continue;
+            }
 
             ArticleCommentDTO articleCommentDTO = new ArticleCommentDTO();
 
@@ -122,6 +130,7 @@ public class CommentServiceImpl implements CommentService {
             articleCommentDTO.setContent(comment.getContent());
             articleCommentDTO.setEmail(comment.getEmail());
             articleCommentDTO.setUserName(comment.getName());
+            articleCommentDTO.setVisible(true);
             //记录的创建时间与评论的时间相同
             articleCommentDTO.setCommentCreateBy(articleComment.getCreate_by());
         }

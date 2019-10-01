@@ -23,7 +23,7 @@ public interface ArticleService {
 
     boolean updateArticlePicture(Long articleId, String pictureUrl);
 
-    boolean ifArticleExit(Long articleId);
+    boolean isArticleExit(Long articleId);
 
     ArticleDTO getArticleDTOById(Long id);
 

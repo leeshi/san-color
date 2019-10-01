@@ -216,8 +216,10 @@
 
   <!--用户自定义-->
   <select id="selectCountByArticleId" resultType="java.lang.Integer" parameterType="java.lang.Long">
-    SELECT COUNT(*) FROM tbl_comment_article WHERE article_id=#{articleId,jdbcType=BIGINT}
-  </select>
+    SELECT COUNT(*) FROM tbl_comment_article,tbl_comment_info WHERE tbl_comment_info.id=tbl_comment_article.article_id=tbl_comment_article.id
+    and #{articleId,jdbcType=BIGINT}
+    and tbl_comment_info.is_visiable=1
+      </select>
 
   <select id="selectAll" resultMap="BaseResultMap">
     select
