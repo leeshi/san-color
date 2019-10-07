@@ -13,7 +13,6 @@ public class ArticleDTO {
     private String title;
     private Integer visibillity;
     private Integer traffic;
-    private Boolean effective;
     private Date createBy;
     private Date modifiedBy;
 
@@ -22,67 +21,13 @@ public class ArticleDTO {
     private String userName;
 
     //tbl_article_content基础字段
-    private Long articleContentId;
     private String content;
 
     //tbl_article_picture基础字段
-    private Long articlePictureId;
     private String pictureUrl;
 
     //tbl_category_article基础字段
     private Long categoryId;
-    private String categoryName;
-
-
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public Integer getTraffic() {
-        return traffic;
-    }
-
-    public void setTraffic(Integer traffic) {
-        this.traffic = traffic;
-    }
-
-    public Date getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(Date modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-
-    public Long getArticlePictureId() {
-        return articlePictureId;
-    }
-
-    public void setArticlePictureId(Long articlePictureId) {
-        this.articlePictureId = articlePictureId;
-    }
-
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
-
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
-    }
 
     public Long getId() {
         return id;
@@ -116,12 +61,12 @@ public class ArticleDTO {
         this.visibillity = visibillity;
     }
 
-    public Boolean getEffective() {
-        return effective;
+    public Integer getTraffic() {
+        return traffic;
     }
 
-    public void setEffective(Boolean effective) {
-        this.effective = effective;
+    public void setTraffic(Integer traffic) {
+        this.traffic = traffic;
     }
 
     public Date getCreateBy() {
@@ -130,6 +75,14 @@ public class ArticleDTO {
 
     public void setCreateBy(Date createBy) {
         this.createBy = createBy;
+    }
+
+    public Date getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(Date modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public Long getUserId() {
@@ -148,14 +101,6 @@ public class ArticleDTO {
         this.userName = userName;
     }
 
-    public Long getArticleContentId() {
-        return articleContentId;
-    }
-
-    public void setArticleContentId(Long articleContentId) {
-        this.articleContentId = articleContentId;
-    }
-
     public String getContent() {
         return content;
     }
@@ -163,4 +108,22 @@ public class ArticleDTO {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+
 }

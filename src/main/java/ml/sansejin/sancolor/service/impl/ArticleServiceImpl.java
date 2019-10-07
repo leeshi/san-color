@@ -1,5 +1,6 @@
 package ml.sansejin.sancolor.service.impl;
 
+import io.swagger.models.auth.In;
 import ml.sansejin.sancolor.dao.*;
 import ml.sansejin.sancolor.dto.ArticleDTO;
 import ml.sansejin.sancolor.entity.*;
@@ -27,9 +28,6 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleMapper articleMapper;
 
     @Resource
-    private ArticleCategoryMapper articleCategoryMapper;
-
-    @Resource
     private ArticlePictureMapper articlePictureMapper;
 
     @Resource
@@ -39,7 +37,10 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleContentMapper articleContentMapper;
 
     @Resource
-    private ArticleCommentMapper articleCommentMapper;
+    private ArticleCategoryMapper articleCategoryMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     /**
      * 添加一篇文章，主要与其他表之间的关系
@@ -49,22 +50,20 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional
     public boolean addArticle(@NotNull ArticleDTO articleDTO) {
-
         //------------------------插入tbl_article_info 记录--------------------------------
         Article article = new Article();
+        Date addDate = new Date();
 
         article.setSummary(articleDTO.getSummary());
         article.setTitle(articleDTO.getTitle());
         article.setVisibillity(articleDTO.getVisibillity());
-        article.setCreate_by(new Date());
-
-        System.out.println(article);
+        article.setCreate_by(addDate);
 
         articleMapper.insertSelective(article);
 
         //先获取一个Example，然后再去进行查找
         ArticleExample articleExample = new ArticleExample();
-        articleExample.createCriteria().andCreate_byEqualTo(article.getCreate_by()).andTitleEqualTo(article.getTitle());
+        articleExample.createCriteria().andCreate_byEqualTo(addDate);
 
         //搜寻具有相同信息的记录
         List<Article> listArticle = articleMapper.selectByExample(articleExample);
@@ -93,13 +92,26 @@ public class ArticleServiceImpl implements ArticleService {
 
         //------------------------插入tbl_article_pic 记录---------------------------------
         //如果图片地址不为空
-        if(articleDTO.getPictureUrl().equals("")){
+        if(articleDTO.getPictureUrl().equals("") && articleDTO.getPictureUrl() != null){
+
             ArticlePicture articlePicture = new ArticlePicture();
 
             articlePicture.setAtricle_id(article.getId());
             articlePicture.setPicture_url(articleDTO.getPictureUrl());
 
             articlePictureMapper.insert(articlePicture);
+
+        }
+
+        //------------------------插入tbl_category_article 记录----------------------------
+        if (articleDTO.getCategoryId() != null){
+            ArticleCategory articleCategory = new ArticleCategory();
+
+            articleCategory.setCreate_by(new Date());
+            articleCategory.setCateory_id(articleDTO.getCategoryId());
+            articleCategory.setArticle_id(article.getId());
+
+            articleCategoryMapper.insertSelective(articleCategory);
         }
 
         return true;
@@ -114,7 +126,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional
     public boolean deleteArticleById(Long id) {
-        //-----------------------删除tbl_article_info 记录----------------------
+        //其他记录将会被级联删除！！
         articleMapper.deleteByPrimaryKey(id);
 
         return true;
@@ -134,7 +146,6 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setId(articleDTO.getId());
 
-        article.setIs_effective(articleDTO.getEffective());
         article.setTraffic(articleDTO.getTraffic());
         article.setModified_by(new Date());
         article.setCreate_by(articleDTO.getCreateBy());
@@ -225,7 +236,6 @@ public class ArticleServiceImpl implements ArticleService {
         //tbl_article_info 信息
         articleDTO.setModifiedBy(article.getModified_by());
         articleDTO.setCreateBy(article.getCreate_by());
-        articleDTO.setEffective(article.getIs_effective());
         articleDTO.setId(articleId);
         articleDTO.setVisibillity(article.getVisibillity());
         articleDTO.setTraffic(article.getTraffic());
@@ -243,6 +253,17 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleDTO.setContent(listArticleContent.get(0).getContent());
 
+        //tbl_category_article 信息
+        ArticleCategoryExample articleCategoryExample = new ArticleCategoryExample();
+        articleCategoryExample.createCriteria().andArticle_idEqualTo(articleId);
+
+        //暂时设置只有一个分类
+        ArticleCategory articleCategory = articleCategoryMapper.selectByExample(articleCategoryExample).get(0);
+        if (articleCategory != null){
+            //获取ID信息后，需要自行调用 category API获取分类信息
+            articleDTO.setCategoryId(articleCategory.getCateory_id());
+        }
+
         //tbl_article_pic 信息
         ArticlePictureExample articlePictureExample = new ArticlePictureExample();
         articlePictureExample.createCriteria().andAtricle_idEqualTo(articleId);
@@ -259,8 +280,13 @@ public class ArticleServiceImpl implements ArticleService {
         //tbl_article_user 信息
         List<ArticleUser> listUser = articleUserMapper.selectByExample(articleUserExample);
         if(!listUser.isEmpty()) {
+            Long userId = listUser.get(0).getUser_id();
+
+            //TODO 修改为正确的数据类型
+            User user = userMapper.selectByPrimaryKey(userId.intValue());
+
             articleDTO.setUserId(listUser.get(0).getUser_id());
-            //articleDTO.setUserName(user.get);
+            articleDTO.setUserName(user.getName());
         }
 
 
@@ -268,36 +294,25 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
-    /**
-     * 该函数获取所有文章的DTO
-     * TODO 如果文章过多，是否会造成很大的延迟
-     * @return List<ArticleDTO>
-     */
-    @Override
-    @Transactional
-    public List<ArticleDTO> listAllArticles() {
-        ArticleExample articleExample = new ArticleExample();
-        //example 条件全部为空
-        List<Article> listArticle = articleMapper.selectByExample(articleExample);
-
-        List<ArticleDTO> listArticleDTO = new ArrayList<>();
-
-        try {
-            //循环获取单个DTO，最后组合成List
-            for (Article article : listArticle) {
-                listArticleDTO.add(this.getArticleDTOById(article.getId()));
-            }
-        }catch (NoArticleContentException e) {
-            e.printStackTrace();
-        }
-        return listArticleDTO;
-    }
-
-
     @Override
     @Transactional
     public List<ArticleDTO> listArticlesByCategoryId(Long categoryId) {
-        return null;
+        ArticleCategoryExample articleCategoryExample = new ArticleCategoryExample();
+        articleCategoryExample.createCriteria().andCateory_idEqualTo(categoryId);
+
+        List<ArticleCategory> listArticleCategory = articleCategoryMapper.selectByExample(articleCategoryExample);
+
+        List<ArticleDTO> listArticleDTO = new ArrayList<>();
+
+        for (ArticleCategory articleCategory : listArticleCategory) {
+            try {
+                listArticleDTO.add(this.getArticleDTOById(articleCategory.getArticle_id()));
+            }catch (NoArticleContentException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return listArticleDTO;
     }
 
     /**
@@ -320,12 +335,12 @@ public class ArticleServiceImpl implements ArticleService {
 
         List<ArticleDTO> listArticleDTO = new ArrayList<>();
 
-        try {
-            for (Article article : listArticle) {
+        for (Article article : listArticle) {
+            try {
                 listArticleDTO.add(this.getArticleDTOById(article.getId()));
+            }catch (NoArticleContentException e){
+                e.printStackTrace();
             }
-        }catch (NoArticleContentException e){
-            e.printStackTrace();
         }
 
         return listArticleDTO;

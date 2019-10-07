@@ -28,6 +28,18 @@ public class ArticleController extends BaseController {
     }
 
     /**
+     * 通过分类id获取所有文章
+     * @param categoryId
+     * @return
+     */
+    @GetMapping(value = "/category/{categoryId}", produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<List<ArticleDTO>> fetchArticlesOfCategory (@PathVariable Long categoryId) {
+        List<ArticleDTO> listArticleDTO = articleService.listLatesetArticles();
+        logger.info(String.format("Fetch all articles of category! Category ID:", categoryId));
+        return new ResponseEntity<>(listArticleDTO, HttpStatus.OK);
+    }
+
+    /**
      * 获取一篇文章
      * @param id
      * @return
