@@ -3,6 +3,7 @@ package ml.sansejin.sancolor.service.impl;
 import ml.sansejin.sancolor.dao.*;
 import ml.sansejin.sancolor.dto.ArticleDTO;
 import ml.sansejin.sancolor.entity.*;
+import ml.sansejin.sancolor.exception.NoArticleContentException;
 import ml.sansejin.sancolor.service.ArticleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -244,7 +245,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional
-    public ArticleDTO getArticleDTOById(Long articleId) {
+    public ArticleDTO getArticleDTOById(Long articleId) throws NoArticleContentException {
         Article article = articleMapper.selectByPrimaryKey(articleId);
         //若文章不存在则返回null
         if(article == null)
@@ -262,10 +263,22 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setTitle(article.getSummary());
         articleDTO.setSummary(article.getSummary());
 
+        //tbl_article_content 信息
+        ArticleContentExample articleContentExample = new ArticleContentExample();
+        articleContentExample.createCriteria().andArticle_idEqualTo(articleId);
+        List<ArticleContent> listArticleContent = articleContentMapper.selectByExampleWithBLOBs(articleContentExample);
+        //如果没有对应的文章信息，则抛出异常
+        if (listArticleContent.isEmpty()){
+            throw new NoArticleContentException();
+        }
+
+        articleDTO.setContent(listArticleContent.get(0).getContent());
+
+        //tbl_article_pic 信息
         ArticlePictureExample articlePictureExample = new ArticlePictureExample();
         articlePictureExample.createCriteria().andAtricle_idEqualTo(articleId);
-        //tbl_article_pic 信息
         List<ArticlePicture> listArticlePicture = articlePictureMapper.selectByExample(articlePictureExample);
+        //文章没有首图是不需要进行特殊处理的
         if(listArticlePicture.size() != 0){
             ArticlePicture articlePicture = listArticlePicture.get(0);
             articleDTO.setPictureUrl(articlePicture.getPicture_url());
@@ -300,12 +313,15 @@ public class ArticleServiceImpl implements ArticleService {
 
         List<ArticleDTO> listArticleDTO = new ArrayList<>();
 
-        //循环获取单个DTO，最后组合成List
-        for(Article article : listArticle){
-            listArticleDTO.add(this.getArticleDTOById(article.getId()));
+        try {
+            //循环获取单个DTO，最后组合成List
+            for (Article article : listArticle) {
+                listArticleDTO.add(this.getArticleDTOById(article.getId()));
+            }
+        }catch (NoArticleContentException e) {
+            e.printStackTrace();
         }
-
-        return null;
+        return listArticleDTO;
     }
 
 
@@ -334,8 +350,13 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         List<ArticleDTO> listArticleDTO = new ArrayList<>();
-        for(Article article : listArticle){
-            listArticleDTO.add(this.getArticleDTOById(article.getId()));
+
+        try {
+            for (Article article : listArticle) {
+                listArticleDTO.add(this.getArticleDTOById(article.getId()));
+            }
+        }catch (NoArticleContentException e){
+            e.printStackTrace();
         }
 
         return listArticleDTO;

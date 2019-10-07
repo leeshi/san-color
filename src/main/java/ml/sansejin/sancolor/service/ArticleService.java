@@ -1,6 +1,7 @@
 package ml.sansejin.sancolor.service;
 
 import ml.sansejin.sancolor.dto.ArticleDTO;
+import ml.sansejin.sancolor.exception.NoArticleContentException;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface ArticleService {
 
     boolean isArticleExit(Long articleId);
 
-    ArticleDTO getArticleDTOById(Long id);
+    ArticleDTO getArticleDTOById(Long id) throws NoArticleContentException;
 
     //返回所有的ArticleDTO
     List<ArticleDTO> listAllArticles();

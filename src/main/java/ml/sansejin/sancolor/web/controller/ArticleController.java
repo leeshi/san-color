@@ -1,6 +1,7 @@
 package ml.sansejin.sancolor.web.controller;
 
 import ml.sansejin.sancolor.dto.ArticleDTO;
+import ml.sansejin.sancolor.exception.NoArticleContentException;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,13 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/{articleId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<ArticleDTO> fetchArticle(@PathVariable Long articleId){
-        ArticleDTO articleDTO = articleService.getArticleDTOById(articleId);
+        ArticleDTO articleDTO;
+
+        try {
+            articleDTO = articleService.getArticleDTOById(articleId);
+        }catch (NoArticleContentException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         //注意是否是空对象
         if(articleDTO != null) {
