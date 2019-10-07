@@ -2,7 +2,6 @@ package ml.sansejin.sancolor.service.impl;
 
 import ml.sansejin.sancolor.dao.ArticleCategoryMapper;
 import ml.sansejin.sancolor.dao.CategoryMapper;
-import ml.sansejin.sancolor.dto.ArticleCategoryDTO;
 import ml.sansejin.sancolor.dto.CategoryDTO;
 import ml.sansejin.sancolor.entity.ArticleCategory;
 import ml.sansejin.sancolor.entity.ArticleCategoryExample;
@@ -188,9 +187,4 @@ public class CategoryServiceImpl implements CategoryService {
         return listCategoryDTO;
     }
 
-    @Transactional
-    @Override
-    public List<ArticleCategoryDTO> listAllArticleCategories() {
-        return null;
-    }
 }

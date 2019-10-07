@@ -117,37 +117,6 @@ public class ArticleServiceImpl implements ArticleService {
         //-----------------------删除tbl_article_info 记录----------------------
         articleMapper.deleteByPrimaryKey(id);
 
-        //-----------------------删除tbl_article_user 记录----------------------
-        ArticleUserExample articleUserExample = new ArticleUserExample();
-        articleUserExample.createCriteria().andArticle_idEqualTo(id);
-
-        articleUserMapper.deleteByExample(articleUserExample);
-
-        //-----------------------删除tbl_article_pic 记录-----------------------
-        ArticlePictureExample articlePictureExample = new ArticlePictureExample();
-        articlePictureExample.createCriteria().andAtricle_idEqualTo(id);
-
-        articlePictureMapper.deleteByExample(articlePictureExample);
-
-        //-----------------------删除tbl_article_category 记录------------------
-        ArticleCategoryExample articleCategoryExample = new ArticleCategoryExample();
-        articleCategoryExample.createCriteria().andArticle_idEqualTo(id);
-
-        articleCategoryMapper.deleteByExample(articleCategoryExample);
-
-        //-----------------------删除tbl_article_content 记录-------------------
-        ArticleContentExample articleContentExample = new ArticleContentExample();
-        articleCategoryExample.createCriteria().andArticle_idEqualTo(id);
-
-        articleContentMapper.deleteByExample(articleContentExample);
-
-        //TODO 是否需要保留评论，或者标记文章已经被删除
-        //·----------------------删除tbl_article_comment 记录-------------------
-        ArticleCommentExample articleCommentExample = new ArticleCommentExample();
-        articleCommentExample.createCriteria().andArticle_idEqualTo(id);
-
-        articleCommentMapper.deleteByExample(articleCommentExample);
-
         return true;
     }
 

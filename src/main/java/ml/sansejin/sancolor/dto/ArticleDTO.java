@@ -29,6 +29,27 @@ public class ArticleDTO {
     private Long articlePictureId;
     private String pictureUrl;
 
+    //tbl_category_article基础字段
+    private Long categoryId;
+    private String categoryName;
+
+
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
     public Integer getTraffic() {
         return traffic;
