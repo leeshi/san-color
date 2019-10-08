@@ -34,8 +34,8 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/category/{categoryId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<List<ArticleDTO>> fetchArticlesOfCategory (@PathVariable Long categoryId) {
-        List<ArticleDTO> listArticleDTO = articleService.listLatesetArticles();
-        logger.info(String.format("Fetch all articles of category! Category ID:", categoryId));
+        List<ArticleDTO> listArticleDTO = articleService.listArticlesByCategoryId(categoryId);
+        logger.info(String.format("Fetch all articles of category! Category ID:%d", categoryId));
         return new ResponseEntity<>(listArticleDTO, HttpStatus.OK);
     }
 
