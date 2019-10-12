@@ -2,6 +2,56 @@
 
 ## I.Data Transfer Object
 
+1. **ArticleDTO**
+
+```java
+public class ArticleDTO {
+    //tbl_article_info基础字段
+    private Long id;
+    private String summary;
+    private String title;
+    private Integer visibillity;
+    private Integer traffic;
+    private Date createBy;
+    private Date modifiedBy;
+
+    //tbl_article_user基础字段
+    private Long userId;
+    private String userName;
+
+    //tbl_article_content基础字段
+    private String content;
+
+    //tbl_article_picture基础字段
+    private String pictureUrl;
+
+    //tbl_category_article基础字段
+    private Long categoryId;
+}
+```
+
+2. **CommentDTO**
+
+```java
+public class CommentDTO {
+    private Long commentId;  //评论的id
+    private String content;  //评论的内容
+    private String userName; //用户名
+    private String email;
+    private String ip;
+}
+```
+
+3. **CategoryDTO**
+
+```java
+public class CategoryDTO {
+    private Long categoryId;
+    private String name;
+    private Integer number;
+}
+```
+
 ## II. RESTful APIs
 
 1. **Article**:
@@ -33,6 +83,7 @@
 	根据ID获取文章的评论数量。  
 	返回如果文章存在，返回状态码*200* 与 Long  
 	***TODO: 先检测文章是否存在，返回404***
+	***TODO: 设计触发器，自动更新数据库中的值***
 	3. `fetchCommentByArticleId: Method=GET, Url=/api/comment/aritcle/{articleId}`  
 	根据ID获取文章的所有评论信息。  
 	如果文章存在，返回状态码*404* 与 List\<DTO\> ，否则，返回*404*  

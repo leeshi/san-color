@@ -2,7 +2,7 @@ package ml.sansejin.sancolor.service.impl;
 
 import ml.sansejin.sancolor.dao.ArticleCommentMapper;
 import ml.sansejin.sancolor.dao.CommentMapper;
-import ml.sansejin.sancolor.dto.ArticleCommentDTO;
+import ml.sansejin.sancolor.dto.CommentDTO;
 import ml.sansejin.sancolor.entity.ArticleComment;
 import ml.sansejin.sancolor.entity.ArticleCommentExample;
 import ml.sansejin.sancolor.entity.Comment;
@@ -32,14 +32,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public boolean addComment(ArticleCommentDTO articleCommentDTO) {
+    public boolean addComment(CommentDTO commentDTO) {
         Comment comment = new Comment();
 
         comment.setCreate_by(new Date());
-        comment.setContent(articleCommentDTO.getContent());
-        comment.setEmail(articleCommentDTO.getEmail());
-        comment.setIp(articleCommentDTO.getIp());
-        comment.setName(articleCommentDTO.getUserName());
+        comment.setContent(commentDTO.getContent());
+        comment.setEmail(commentDTO.getEmail());
+        comment.setIp(commentDTO.getIp());
+        comment.setName(commentDTO.getUserName());
 
         commentMapper.insertSelective(comment);
 
@@ -57,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
             ArticleComment articleComment = new ArticleComment();
 
             articleComment.setCreate_by(comment.getCreate_by());
-            articleComment.setArticle_id(articleCommentDTO.getArticleId());
+            articleComment.setArticle_id(commentDTO.getArticleId());
             articleComment.setComment_id(commentId);
 
             articleCommentMapper.insertSelective(articleComment);
@@ -69,14 +69,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public boolean updateComment(ArticleCommentDTO articleCommentDTO) {
+    public boolean updateComment(CommentDTO commentDTO) {
         Comment comment = new Comment();
-        comment.setContent(articleCommentDTO.getContent());
+        comment.setContent(commentDTO.getContent());
         comment.setModified_by(new Date());
-        comment.setIs_visiable(articleCommentDTO.getVisible());
+        comment.setIs_visiable(commentDTO.getVisible());
 
         CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria().andIdEqualTo(articleCommentDTO.getCommentId());
+        commentExample.createCriteria().andIdEqualTo(commentDTO.getCommentId());
 
         commentMapper.updateByExampleSelective(comment, commentExample);
 
@@ -106,8 +106,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public List<ArticleCommentDTO> listAllCommentsByArticleId(Long articleId) {
-        List<ArticleCommentDTO> listArticleCommentDTO = new ArrayList<>();
+    public List<CommentDTO> listAllCommentsByArticleId(Long articleId) {
+        List<CommentDTO> listArticleCommentDTO = new ArrayList<>();
 
         ArticleCommentExample articleCommentExample = new ArticleCommentExample();
         articleCommentExample.createCriteria().andArticle_idEqualTo(articleId);
@@ -122,17 +122,17 @@ public class CommentServiceImpl implements CommentService {
                 continue;
             }
 
-            ArticleCommentDTO articleCommentDTO = new ArticleCommentDTO();
+            CommentDTO commentDTO = new CommentDTO();
 
-            articleCommentDTO.setArticleCommentId(articleComment.getId());
-            articleCommentDTO.setArticleId(articleComment.getArticle_id());
-            articleCommentDTO.setCommentId(articleComment.getComment_id());
-            articleCommentDTO.setContent(comment.getContent());
-            articleCommentDTO.setEmail(comment.getEmail());
-            articleCommentDTO.setUserName(comment.getName());
-            articleCommentDTO.setVisible(true);
+            commentDTO.setArticleCommentId(articleComment.getId());
+            commentDTO.setArticleId(articleComment.getArticle_id());
+            commentDTO.setCommentId(articleComment.getComment_id());
+            commentDTO.setContent(comment.getContent());
+            commentDTO.setEmail(comment.getEmail());
+            commentDTO.setUserName(comment.getName());
+            commentDTO.setVisible(true);
             //记录的创建时间与评论的时间相同
-            articleCommentDTO.setCommentCreateBy(articleComment.getCreate_by());
+            commentDTO.setCommentCreateBy(articleComment.getCreate_by());
         }
 
         return listArticleCommentDTO;
@@ -140,16 +140,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public List<ArticleCommentDTO> listAllComments() {
-        List<ArticleCommentDTO> listArticleCommentDTO = new ArrayList<>();
+    public List<CommentDTO> listAllComments() {
+        List<CommentDTO> listCommentDTO = new ArrayList<>();
         List<ArticleComment> listArticleComment;
-        ArticleCommentDTO articleCommentDTO;
+        CommentDTO commentDTO;
         Comment comment;
 
         listArticleComment = articleCommentMapper.selectAll();
 
         for (ArticleComment articleComment : listArticleComment) {
-            articleCommentDTO = new ArticleCommentDTO();
+            commentDTO = new CommentDTO();
             comment = commentMapper.selectByPrimaryKey(articleComment.getComment_id());
 
             //TODO 增加异常处理
@@ -158,19 +158,19 @@ public class CommentServiceImpl implements CommentService {
             }
 
             //两者的创建时间相同
-            articleCommentDTO.setCommentCreateBy(articleComment.getCreate_by());
-            articleCommentDTO.setEmail(comment.getEmail());
-            articleCommentDTO.setUserName(comment.getName());
-            articleCommentDTO.setContent(comment.getContent());
-            articleCommentDTO.setVisible(comment.getIs_visiable());
-            articleCommentDTO.setArticleId(articleComment.getArticle_id());
-            articleCommentDTO.setArticleCommentId(articleCommentDTO.getArticleCommentId());
-            articleCommentDTO.setIp(comment.getIp());
-            articleCommentDTO.setCommentId(comment.getId());
+            commentDTO.setCommentCreateBy(articleComment.getCreate_by());
+            commentDTO.setEmail(comment.getEmail());
+            commentDTO.setUserName(comment.getName());
+            commentDTO.setContent(comment.getContent());
+            commentDTO.setVisible(comment.getIs_visiable());
+            commentDTO.setArticleId(articleComment.getArticle_id());
+            commentDTO.setArticleCommentId(commentDTO.getArticleCommentId());
+            commentDTO.setIp(comment.getIp());
+            commentDTO.setCommentId(comment.getId());
 
-            listArticleCommentDTO.add(articleCommentDTO);
+            listCommentDTO.add(commentDTO);
         }
 
-        return listArticleCommentDTO;
+        return listCommentDTO;
     }
 }

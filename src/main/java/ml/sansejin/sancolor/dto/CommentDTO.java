@@ -7,7 +7,7 @@ import java.util.Date;
  * @author sansejin
  */
 
-public class ArticleCommentDTO {
+public class CommentDTO {
     //tbl_comment_info基础字段
     private Long commentId;  //评论的id
     private String content;  //评论的内容

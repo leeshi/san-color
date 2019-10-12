@@ -1,6 +1,6 @@
 package ml.sansejin.sancolor.web.controller;
 
-import ml.sansejin.sancolor.dto.ArticleCommentDTO;
+import ml.sansejin.sancolor.dto.CommentDTO;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,13 @@ public class CommentController extends BaseController{
     private static final Logger logger = Logger.getLogger(CommentController.class);
 
     @GetMapping(value = "/")
-    public ResponseEntity<List<ArticleCommentDTO>> fetchAllComments() {
-        List<ArticleCommentDTO> listArticleCommentDTO;
+    public ResponseEntity<List<CommentDTO>> fetchAllComments() {
+        List<CommentDTO> listCommentDTO;
 
-        listArticleCommentDTO = commentService.listAllComments();
+        listCommentDTO = commentService.listAllComments();
         logger.info("Fetch all comments");
 
-        return new ResponseEntity<>(listArticleCommentDTO, HttpStatus.OK);
+        return new ResponseEntity<>(listCommentDTO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/count/{articleId}")
@@ -39,48 +39,48 @@ public class CommentController extends BaseController{
     }
 
     @GetMapping(value = "/article/{articleId}")
-    public ResponseEntity<List<ArticleCommentDTO>> fetchCommentByArticleId(@PathVariable Long articleId) {
-        List<ArticleCommentDTO> listArticleCommentDTO = commentService.listAllCommentsByArticleId(articleId);
+    public ResponseEntity<List<CommentDTO>> fetchCommentByArticleId(@PathVariable Long articleId) {
+        List<CommentDTO> listCommentDTO = commentService.listAllCommentsByArticleId(articleId);
 
 
-        if (listArticleCommentDTO.isEmpty()){
+        if (listCommentDTO.isEmpty()){
             logger.info(String.format("No comment of specific article! ID:%d", articleId));
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else {
             logger.info(String.format("Fetch comments of specific article! ID:%d", articleId));
 
-            return new ResponseEntity<>(listArticleCommentDTO, HttpStatus.OK);
+            return new ResponseEntity<>(listCommentDTO, HttpStatus.OK);
         }
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<Void> addComment(@RequestBody ArticleCommentDTO articleCommentDTO) {
+    public ResponseEntity<Void> addComment(@RequestBody CommentDTO commentDTO) {
         try{
-            commentService.addComment(articleCommentDTO);
+            commentService.addComment(commentDTO);
 
-            logger.info(String.format("Add a comment! Comment:%s, ArticleId:%d", articleCommentDTO.getContent(), articleCommentDTO.getArticleId()));
+            logger.info(String.format("Add a comment! Comment:%s, ArticleId:%d", commentDTO.getContent(), commentDTO.getArticleId()));
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
             //如果不存在对应的comment或者article，就会返回异常码
-            logger.error(String.format("Trying to add a comment to article not exits! ArticleID:%d", articleCommentDTO.getArticleId()));
+            logger.error(String.format("Trying to add a comment to article not exits! ArticleID:%d", commentDTO.getArticleId()));
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
     @PutMapping(value = "/{commentId}")
-    public ResponseEntity<Void> updateComment(@PathVariable Long commentId, @RequestBody ArticleCommentDTO articleCommentDTO) {
+    public ResponseEntity<Void> updateComment(@PathVariable Long commentId, @RequestBody CommentDTO commentDTO) {
         try {
-            articleCommentDTO.setCommentId(commentId);
+            commentDTO.setCommentId(commentId);
 
-            commentService.updateComment(articleCommentDTO);
+            commentService.updateComment(commentDTO);
 
             logger.info(String.format("Update a comment! ID:%d", commentId));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
-            logger.error(String.format("Trying to add a comment to article not exits! ArticleID:%d", articleCommentDTO.getArticleId()));
+            logger.error(String.format("Trying to add a comment to article not exits! ArticleID:%d", commentDTO.getArticleId()));
 
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
