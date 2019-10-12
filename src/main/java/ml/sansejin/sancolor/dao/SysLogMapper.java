@@ -18,4 +18,6 @@ public interface SysLogMapper {
     int updateByPrimaryKeySelective(SysLog record);
 
     int updateByPrimaryKey(SysLog record);
+
+    int selectCountOfLog();
 }

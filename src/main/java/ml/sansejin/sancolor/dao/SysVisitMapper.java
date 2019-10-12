@@ -18,4 +18,6 @@ public interface SysVisitMapper {
     int updateByPrimaryKeySelective(SysVisit record);
 
     int updateByPrimaryKey(SysVisit record);
+
+    int selectCountOfVisit();
 }

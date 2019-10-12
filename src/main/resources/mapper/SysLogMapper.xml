@@ -139,4 +139,8 @@
       operate_by = #{operate_by,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectCountOfLog" resultType="Integer">
+    select COUNT(*)
+    from sys_log
+  </select>
 </mapper>

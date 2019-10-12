@@ -3,7 +3,10 @@ package ml.sansejin.sancolor.web.controller;
 import ml.sansejin.sancolor.service.ArticleService;
 import ml.sansejin.sancolor.service.CategoryService;
 import ml.sansejin.sancolor.service.CommentService;
+import ml.sansejin.sancolor.service.SysService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author sansejin
@@ -18,5 +21,9 @@ public class BaseController {
     CommentService commentService;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    SysService sysService;
 
+    @Autowired
+    HttpServletRequest request;
 }
