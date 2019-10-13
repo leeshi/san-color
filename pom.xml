@@ -28,7 +28,11 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.1.0</version>
         </dependency>
-
+        <!--Spring AOP-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
         <!--Mybatis 逆向工程-->
         <dependency>
             <groupId>org.mybatis.generator</groupId>

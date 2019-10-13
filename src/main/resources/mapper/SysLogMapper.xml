@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="ml.sansejin.sancolor.entity.SysLog">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="is_effective" jdbcType="BIT" property="is_effective"/>
     <result column="create_by" jdbcType="TIMESTAMP" property="create_by" />
     <result column="modified_by" jdbcType="TIMESTAMP" property="modified_by" />
     <result column="operate_url" jdbcType="VARCHAR" property="operate_url" />
@@ -39,7 +40,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, ip, create_by, modified_by, operate_url, operate_by
+    id, ip, create_by, modified_by, operate_url, operate_by, is_effective
   </sql>
   <select id="selectByExample" parameterType="ml.sansejin.sancolor.entity.SysLogExample" resultMap="BaseResultMap">
     select
@@ -68,9 +69,9 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="ml.sansejin.sancolor.entity.SysLog" useGeneratedKeys="true">
     insert into sys_log (ip, create_by, modified_by, 
-      operate_url, operate_by)
+      operate_url, operate_by, is_effective)
     values (#{ip,jdbcType=VARCHAR}, #{create_by,jdbcType=TIMESTAMP}, #{modified_by,jdbcType=TIMESTAMP}, 
-      #{operate_url,jdbcType=VARCHAR}, #{operate_by,jdbcType=VARCHAR})
+      #{operate_url,jdbcType=VARCHAR}, #{operate_by,jdbcType=VARCHAR}, #{is_effective,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="ml.sansejin.sancolor.entity.SysLog" useGeneratedKeys="true">
     insert into sys_log
@@ -90,6 +91,9 @@
       <if test="operate_by != null">
         operate_by,
       </if>
+      <if test="is_effective != null">
+        is_effective,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="ip != null">
@@ -106,6 +110,9 @@
       </if>
       <if test="operate_by != null">
         #{operate_by,jdbcType=VARCHAR},
+      </if>
+      <if test="is_effective != null">
+        #{is_effective, jdbcType=BIT}
       </if>
     </trim>
   </insert>
@@ -127,6 +134,9 @@
       <if test="operate_by != null">
         operate_by = #{operate_by,jdbcType=VARCHAR},
       </if>
+      <if test="is_effective != null">
+        is_effective = #{is_effective, jdbcType=BIT}
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -135,6 +145,7 @@
     set ip = #{ip,jdbcType=VARCHAR},
       create_by = #{create_by,jdbcType=TIMESTAMP},
       modified_by = #{modified_by,jdbcType=TIMESTAMP},
+      is_effective = #{is_effective, jdbcType=BIT},
       operate_url = #{operate_url,jdbcType=VARCHAR},
       operate_by = #{operate_by,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

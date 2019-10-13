@@ -16,7 +16,7 @@ import java.util.List;
  **/
 
 @RestController
-@RequestMapping(value = "/api/comment")
+@RequestMapping(value = "/api/v1/comment")
 public class CommentController extends BaseController{
     private static final Logger logger = Logger.getLogger(CommentController.class);
 

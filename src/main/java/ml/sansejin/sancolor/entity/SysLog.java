@@ -15,6 +15,17 @@ public class SysLog {
 
     private String operate_by;
 
+    //表示该修改请求是否被接受
+    private Boolean is_effective;
+
+    public Boolean getIs_effective() {
+        return is_effective;
+    }
+
+    public void setIs_effective(Boolean is_effective) {
+        this.is_effective = is_effective;
+    }
+
     public Long getId() {
         return id;
     }

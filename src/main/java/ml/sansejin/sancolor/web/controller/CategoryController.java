@@ -16,7 +16,7 @@ import java.util.List;
  **/
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/v1/category")
 public class CategoryController extends BaseController {
     private static final Logger logger = Logger.getLogger(CategoryController.class);
 

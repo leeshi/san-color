@@ -16,7 +16,7 @@ import java.util.List;
  * @create 9/18/19 7:49 PM
  **/
 @RestController
-@RequestMapping("/api/article")
+@RequestMapping("/api/v1/article")
 public class ArticleController extends BaseController {
     private static final Logger logger = Logger.getLogger(ArticleController.class);
 
@@ -85,10 +85,14 @@ public class ArticleController extends BaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(value = "/",produces = {"application/json;charset=UTF-8"})
-    public ResponseEntity<Void> updateArticle(@RequestBody ArticleDTO articleDTO){
-        articleService.updateArticle(articleDTO);
-        logger.info(String.format("Update an article! ID:%d", articleDTO.getId()));
+    @PutMapping(value = "/{articleId}",produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<Void> updateArticle(@PathVariable Long articleId, @RequestBody ArticleDTO articleDTO){
+        if (!articleService.isArticleExit(articleId)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        articleService.updateArticle(articleId, articleDTO);
+        logger.info(String.format("Update an article! ID:%d", articleId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

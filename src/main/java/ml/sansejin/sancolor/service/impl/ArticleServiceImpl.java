@@ -139,11 +139,11 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional
-    public boolean updateArticle(ArticleDTO articleDTO) {
+    public boolean updateArticle(Long articleId, ArticleDTO articleDTO) {
         //新建一个Article对象
         Article article = new Article();
 
-        article.setId(articleDTO.getId());
+        article.setId(articleId);
 
         article.setTraffic(articleDTO.getTraffic());
         article.setModified_by(new Date());
@@ -152,7 +152,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setVisibillity(articleDTO.getVisibillity());
         article.setSummary(articleDTO.getSummary());
 
-        articleMapper.updateByPrimaryKey(article);
+        articleMapper.updateByPrimaryKeySelective(article);
 
         return true;
     }

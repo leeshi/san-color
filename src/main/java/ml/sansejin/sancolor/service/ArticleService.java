@@ -15,7 +15,7 @@ public interface ArticleService {
 
     boolean deleteArticleById(Long id);
 
-    boolean updateArticle(ArticleDTO articleDTO);
+    boolean updateArticle(Long articleId, ArticleDTO articleDTO);
 
     boolean updateArticlePicture(Long articleId, String pictureUrl);
 
