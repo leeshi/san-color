@@ -1,6 +1,6 @@
 # San-Color: A blog system based on SSM framework
 
-## I.Data Transfer Object
+## I. Data Transfer Object
 
 1. **ArticleDTO**
 
@@ -72,7 +72,7 @@ public class CategoryDTO {
 	删除成功返回状态码*200*
 	6. `updateArticle: Method=PUT, Url=/api/article/{articleId}`  
 	根据ID更新文章信息。注意，原有文章的信息除了*createBy*, *modifiedBy*,*traffic*, *id*之外，其他信息都要包装到请求体中进行发送。  
-	更新成功返回状态码*200*  
+	更新成功返回状态码*200*，如果文章不存在返回*404*  
 	***TODO: 只更新请求体中存在的数据域。***
 
 2. **Comment**:
@@ -118,3 +118,8 @@ public class CategoryDTO {
 	通过ID更新文章所属的分类，*Put Data* 为一个分类的ID。  
 	如果对应文章ID存在，并且分类ID也存在，则返回状态码*201*，否则返回*404*  
 	**TODO: 先进行分类与文章是否存在再进行请求处理***
+
+## III. System Logger
+
+调用`fetchArticle(Long articleId)`与`fetchAllArticles`接口将会增加一条系统的访问量。  
+调用`update`,`delete`,`add`接口将会增加一条系统的记录日志，会记录操作的浏览器，url以及时间
