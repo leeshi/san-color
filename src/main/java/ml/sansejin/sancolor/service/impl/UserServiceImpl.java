@@ -42,6 +42,11 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    /**
+     * 通过用户名获取用户实体，可能返回null
+     * @param userName
+     * @return
+     */
     @Override
     public User getUserByUserName(String userName) {
         UserExample userExample = new UserExample();
