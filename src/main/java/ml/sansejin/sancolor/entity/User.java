@@ -1,6 +1,9 @@
 package ml.sansejin.sancolor.entity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class User {
     private Integer id;
@@ -19,6 +22,12 @@ public class User {
 
     public String getRole() {
         return role;
+    }
+
+    public List<String> getRolesList() {
+        List<String> roles = Arrays.asList(role.split(","));
+
+        return roles;
     }
 
     public void setRole(String role) {
