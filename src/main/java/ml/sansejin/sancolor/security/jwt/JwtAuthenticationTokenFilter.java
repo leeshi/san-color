@@ -28,13 +28,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     UserDetailsService userDetailsService;
 
-    @Resource
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Value("${jwt.header}")
+    @Value("Author")
     private String tokenHeader;
 
-    @Value("${jwt.tokenHead}")
+    @Value("Head")
     private String tokenHead;
 
     @Override
@@ -43,15 +40,15 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith(tokenHead)) {
             final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
-            String username = jwtTokenUtil.getUsernameFromToken(authToken);
+            String username = JwtTokenUtil.getUsernameFromToken(authToken);
 
-            logger.info("checking authentication " + username);
+            logger.info("Checking authentication of USER:" + username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-                if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+                if (JwtTokenUtil.validateToken(authToken, userDetails)) {
 
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());

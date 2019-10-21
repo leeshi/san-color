@@ -1,13 +1,13 @@
-package ml.sansejin.sancolor.security.service;
+package ml.sansejin.sancolor.security.service.impl;
 
 import ml.sansejin.sancolor.entity.User;
 import ml.sansejin.sancolor.security.model.JwtUserFactory;
 import ml.sansejin.sancolor.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
 
 /**
  * @author sansejin
@@ -15,8 +15,10 @@ import javax.annotation.Resource;
  * @description TODO
  * @create 10/15/19 4:09 PM
  **/
+
+@Service("userDetailsService")
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
-    @Resource
+    @Autowired
     UserService userService;
 
     @Override

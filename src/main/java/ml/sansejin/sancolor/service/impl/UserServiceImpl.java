@@ -4,6 +4,7 @@ import ml.sansejin.sancolor.dao.UserMapper;
 import ml.sansejin.sancolor.entity.User;
 import ml.sansejin.sancolor.entity.UserExample;
 import ml.sansejin.sancolor.service.UserService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.List;
  * @description TODO 增加权限管理
  * @create 10/15/19 3:14 PM
  **/
+
+@Service
 public class UserServiceImpl implements UserService {
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Override
     public boolean addUser(User user) {
@@ -52,7 +55,12 @@ public class UserServiceImpl implements UserService {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andNameEqualTo(userName);
 
-        return userMapper.selectByExample(userExample).get(0);
+        List<User> listUser = userMapper.selectByExample(userExample);
+
+        if (listUser.isEmpty())
+            return null;
+        else
+            return listUser.get(0);
     }
 
     @Override

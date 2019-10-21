@@ -1,0 +1,54 @@
+package ml.sansejin.sancolor.security.controller;
+
+import ml.sansejin.sancolor.entity.User;
+import ml.sansejin.sancolor.security.service.AuthService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * @author sansejin
+ * @className AuthController
+ * @description TODO
+ * @create 10/20/19 5:54 PM
+ **/
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+    @Value("Head")
+    private String tokenHeader;
+
+    @Resource
+    AuthService authService;
+
+    //登录接口
+    @PostMapping(value = "/", produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<Void> createAuthenticationToken(@RequestBody User user){
+        //登录后返回Token
+        final String token = authService.login(user.getName(), user.getPassword());
+
+        return null;
+    }
+
+    //刷新Token接口
+    @GetMapping(value = "/")
+    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request){
+        String token = request.getHeader(tokenHeader);
+        String refreshedToken = authService.refresh(token);
+
+        if (refreshedToken == null){
+            return ResponseEntity.badRequest().body(null);
+        } else {
+            return ResponseEntity.ok(null);
+        }
+    }
+
+    //注册接口
+    @PostMapping(value = "register")
+    public User register(@RequestBody User user){
+        return authService.register(user);
+    }
+}

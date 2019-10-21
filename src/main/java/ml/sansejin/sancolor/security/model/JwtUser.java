@@ -75,7 +75,7 @@ public class JwtUser implements UserDetails {
     }
 
     @JsonIgnore
-    public Date getLastModifiedDateDate() {
+    public Date getLastModifiedDate() {
         return lastModifiedDate;
     }
 
