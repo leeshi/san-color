@@ -2,6 +2,7 @@ package ml.sansejin.sancolor.security.controller;
 
 import ml.sansejin.sancolor.entity.User;
 import ml.sansejin.sancolor.security.service.AuthService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final Logger logger = Logger.getLogger(AuthController.class);
+
+
     @Value("Head")
     private String tokenHeader;
 
@@ -28,7 +32,10 @@ public class AuthController {
     @PostMapping(value = "/", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> createAuthenticationToken(@RequestBody User user){
         //登录后返回Token
+        logger.debug(String.format("Authenticating user: \"%s\", password received: \"%s\"", user.getName(), user.getPassword()));
         final String token = authService.login(user.getName(), user.getPassword());
+
+        System.out.println(token == null);
 
         return null;
     }

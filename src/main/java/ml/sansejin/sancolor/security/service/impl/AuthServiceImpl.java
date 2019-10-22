@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,6 +34,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Value("Head")
     private String tokenHead;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     public AuthServiceImpl(
@@ -66,8 +70,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String login(String username, String password) {
-        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
+    public String login(String username, String encodedPassword) {
+        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, encodedPassword);
         final Authentication authentication = authenticationManager.authenticate(upToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

@@ -65,7 +65,7 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 //匹配url
-                .antMatchers(HttpMethod.POST).authenticated()
+                //.antMatchers(HttpMethod.POST).authenticated()
                 .antMatchers(HttpMethod.DELETE).authenticated()
                 .antMatchers(HttpMethod.PUT).authenticated()
 
@@ -74,6 +74,8 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         //禁用缓存
         httpSecurity.headers().cacheControl();
+
+        //注入过滤器
         httpSecurity
                 .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

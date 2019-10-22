@@ -1,5 +1,7 @@
 package ml.sansejin.sancolor.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +25,7 @@ public class User {
         return role;
     }
 
+    @JsonIgnore
     public List<String> getRolesList() {
         List<String> roles = Arrays.asList(role.split(","));
 

@@ -16,6 +16,7 @@ import java.util.Date;
 public class JwtUser implements UserDetails {
     private final Integer id;
     private final String userName;
+    //经过加密的？ TODO
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private final Date lastModifiedDate;
@@ -65,7 +66,7 @@ public class JwtUser implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @JsonIgnore
