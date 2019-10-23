@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 
 /**
@@ -35,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     @Value("Head")
     private String tokenHead;
 
-    @Autowired
+    @Resource
     PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -62,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         //对密码进行加密
         userToAdd.setPassword(encoder.encode(rawPassword));
         userToAdd.setModified_by(new Date());
-        userToAdd.setRole("USER");
+        userToAdd.setRole("ROLE_USER");
 
         userService.addUser(userToAdd);
 
@@ -70,14 +71,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String login(String username, String encodedPassword) {
-        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, encodedPassword);
+    public String login(String username, String password) {
+        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
         final Authentication authentication = authenticationManager.authenticate(upToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        final String token = JwtTokenUtil.generateToken(userDetails);
-        return token;
+        return JwtTokenUtil.generateToken(userDetails);
     }
 
     @Override

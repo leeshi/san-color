@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import ml.sansejin.sancolor.security.model.JwtUser;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +21,12 @@ import java.util.Map;
 
 @Component
 public class JwtTokenUtil implements Serializable {
-    private static final long serialVersionUID = -3301605591108950415L;
+    private static final long serialVersionUID = 1L;
 
+    //加密要钥匙
     private static final String secret = "Secret";
 
-    private static final Long expiration = 3600L;
+    private static final Long expiration = 3000L;
 
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
@@ -49,7 +49,7 @@ public class JwtTokenUtil implements Serializable {
         JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
         final Date created = getCreatedDateFromToken(token);
-        //final Date expiration = getExpirationDateFromToken(token);
+
         return (
                 username.equals(user.getUsername())
                         && !isTokenExpired(token)
@@ -101,10 +101,14 @@ public class JwtTokenUtil implements Serializable {
 
 
     private static Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
-        return (lastPasswordReset != null && created.before(lastPasswordReset));
+        if (lastPasswordReset == null) {
+            return false;
+        } else {
+            return created.before(lastPasswordReset);
+        }
     }
 
-    public static Date getExpirationDateFromToken(String token) {
+    private static Date getExpirationDateFromToken(String token) {
         Date expiration;
         try {
             final Claims claims = getClaimsFromToken(token);
@@ -115,7 +119,7 @@ public class JwtTokenUtil implements Serializable {
         return expiration;
     }
 
-    public static Date getCreatedDateFromToken(String token) {
+    private static Date getCreatedDateFromToken(String token) {
         Date created;
         try {
             final Claims claims = getClaimsFromToken(token);

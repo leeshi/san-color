@@ -65,12 +65,10 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 //匹配url
-                //.antMatchers(HttpMethod.POST).authenticated()
-                .antMatchers(HttpMethod.DELETE).authenticated()
-                .antMatchers(HttpMethod.PUT).authenticated()
-
-                //除了以上的请求外，都直接允许
-                .anyRequest().permitAll();
+                .antMatchers(HttpMethod.GET).permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/auth/**").authenticated()
+                .anyRequest().authenticated();
 
         //禁用缓存
         httpSecurity.headers().cacheControl();

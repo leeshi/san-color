@@ -28,18 +28,20 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     UserDetailsService userDetailsService;
 
-    @Value("Author")
+    @Value("Authorization")
     private String tokenHeader;
 
-    @Value("Head")
+    //加密后的头部
+    @Value("eyJhbGciOiJIUzUxMiJ9")
     private String tokenHead;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = httpServletRequest.getHeader(this.tokenHeader);
+        final String authToken = httpServletRequest.getHeader(this.tokenHeader);
 
-        if (authHeader != null && authHeader.startsWith(tokenHead)) {
-            final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
+        if (authToken != null /*&& authHeader.startsWith(tokenHead)*/) {
+            //authHeader.substring(tokenHead.length()); // The part after "Bearer "
+
             String username = JwtTokenUtil.getUsernameFromToken(authToken);
 
             logger.info("Checking authentication of USER:" + username);

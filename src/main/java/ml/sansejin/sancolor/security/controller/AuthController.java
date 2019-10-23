@@ -1,6 +1,7 @@
 package ml.sansejin.sancolor.security.controller;
 
 import ml.sansejin.sancolor.entity.User;
+import ml.sansejin.sancolor.security.jwt.JwtAuthenticationResponse;
 import ml.sansejin.sancolor.security.service.AuthService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @create 10/20/19 5:54 PM
  **/
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
     private static final Logger logger = Logger.getLogger(AuthController.class);
 
@@ -30,14 +31,19 @@ public class AuthController {
 
     //登录接口
     @PostMapping(value = "/", produces = {"application/json;charset=UTF-8"})
-    public ResponseEntity<Void> createAuthenticationToken(@RequestBody User user){
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody User user){
         //登录后返回Token
-        logger.debug(String.format("Authenticating user: \"%s\", password received: \"%s\"", user.getName(), user.getPassword()));
+        logger.info(String.format("Authenticating user: \"%s\", password received: \"%s\"", user.getName(), user.getPassword()));
         final String token = authService.login(user.getName(), user.getPassword());
 
-        System.out.println(token == null);
+        if (token == null) {
+            logger.info(String.format("Fail to generate token for user: \"%s\"", user.getName()));
+            return ResponseEntity.badRequest().body(null);
+        } else {
+            logger.info(String.format("Success to generate token for user: \"%s\"  token: \"%s\"", user.getName(), token));
+            return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        }
 
-        return null;
     }
 
     //刷新Token接口
