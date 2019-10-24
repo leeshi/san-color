@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * @author sansejin
  * @className JwtAuthenticationTokenFilter
- * @description TODO
+ * @description JWT验证过滤器，每次接受请求都会调用该过滤器
  * @create 10/15/19 4:42 PM
  **/
 
@@ -32,15 +32,15 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
 
     //加密后的头部
-    @Value("eyJhbGciOiJIUzUxMiJ9")
+    @Value("Bear")
     private String tokenHead;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        final String authToken = httpServletRequest.getHeader(this.tokenHeader);
+        final String authHeader = httpServletRequest.getHeader(this.tokenHeader);
 
-        if (authToken != null /*&& authHeader.startsWith(tokenHead)*/) {
-            //authHeader.substring(tokenHead.length()); // The part after "Bearer "
+        if (authHeader != null && authHeader.startsWith(tokenHead)) {
+            final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
 
             String username = JwtTokenUtil.getUsernameFromToken(authToken);
 

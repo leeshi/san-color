@@ -23,7 +23,7 @@ public class AuthController {
     private static final Logger logger = Logger.getLogger(AuthController.class);
 
 
-    @Value("Head")
+    @Value("Authorization")
     private String tokenHeader;
 
     @Resource
@@ -49,13 +49,15 @@ public class AuthController {
     //刷新Token接口
     @GetMapping(value = "/")
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request){
+        //header有可能为空
         String token = request.getHeader(tokenHeader);
         String refreshedToken = authService.refresh(token);
 
         if (refreshedToken == null){
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Validated token cannot be null.");
         } else {
-            return ResponseEntity.ok(null);
+            //刷新成功，返回新的token
+            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
         }
     }
 

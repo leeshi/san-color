@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import ml.sansejin.sancolor.security.model.JwtUser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * @author sansejin
  * @className JwtTokenUtil
- * @description TODO
+ * @description JWT验证工具类
  * @create 10/15/19 4:51 PM
  **/
 
@@ -24,14 +25,16 @@ public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //加密要钥匙
-    private static final String secret = "Secret";
+    private static final String secret = "Panda";
 
     private static final Long expiration = 3000L;
 
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
 
-    public JwtTokenUtil() {
+    private static final String tokenHead = "Bear";
+
+    private JwtTokenUtil() {
     }
 
     public static String getUsernameFromToken(String token){
@@ -64,7 +67,7 @@ public class JwtTokenUtil implements Serializable {
     }
 
     private static String generateToken(Map<String, Object> claims) {
-        return Jwts.builder()
+        return tokenHead + Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(generateExpirationDate())
                 .signWith(SignatureAlgorithm.HS512, secret)

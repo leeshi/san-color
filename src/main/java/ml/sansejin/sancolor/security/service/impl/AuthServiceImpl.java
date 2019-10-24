@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private UserDetailsService userDetailsService;
     private UserService userService;
 
-    @Value("Head")
+    @Value("Bear")
     private String tokenHead;
 
     @Resource
@@ -81,12 +81,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String refresh(String oldToken) {
-        final String token = oldToken.substring(tokenHead.length());
-        String username = JwtTokenUtil.getUsernameFromToken(token);
+    public String refresh(String oldHeader) {
+        if (oldHeader == null){
+            return null;
+        }
+
+        final String oldToken = oldHeader.substring(tokenHead.length());
+        String username = JwtTokenUtil.getUsernameFromToken(oldToken);
         JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-        if (JwtTokenUtil.canTokenBeRefreshed(token, user.getLastModifiedDate())){
-            return JwtTokenUtil.refreshToken(token);
+        if (JwtTokenUtil.canTokenBeRefreshed(oldToken, user.getLastModifiedDate())){
+            return JwtTokenUtil.refreshToken(oldToken);
         }
         return null;
     }
