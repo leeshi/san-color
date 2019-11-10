@@ -67,10 +67,10 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // 匹配url
                 // GET 请求全部允许
                 // auth 的 POST 请求用于注册帐号
-                .antMatchers(HttpMethod.GET).permitAll()
-                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/auth/**").authenticated()
-                .anyRequest().hasRole("ADMIN");
+                .antMatchers(HttpMethod.GET).permitAll();
+                //.antMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                //.antMatchers(HttpMethod.GET, "/auth/**").authenticated()
+                //.anyRequest().hasRole("ADMIN");
 
         //禁用缓存
         httpSecurity.headers().cacheControl();

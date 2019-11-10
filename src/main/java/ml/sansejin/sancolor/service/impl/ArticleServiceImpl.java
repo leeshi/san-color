@@ -5,6 +5,7 @@ import ml.sansejin.sancolor.dto.ArticleDTO;
 import ml.sansejin.sancolor.entity.*;
 import ml.sansejin.sancolor.exception.NoArticleContentException;
 import ml.sansejin.sancolor.service.ArticleService;
+import ml.sansejin.sancolor.util.MarkdownUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,8 +76,10 @@ public class ArticleServiceImpl implements ArticleService {
 
         //------------------------插入tbl_article_content 记录----------------------------
         ArticleContent articleContent = new ArticleContent();
-        articleContent.setContent(articleDTO.getContent());
+        articleContent.setRaw_content(articleDTO.getContent());
         //tbl_article_content 中id直接与tbl_article_info 中的id相同
+        //对markdown脚本进行解析
+        articleContent.setParsed_content(MarkdownUtil.parseMarkdown(articleDTO.getContent()));
         articleContent.setArticle_id(article.getId());
 
         articleContentMapper.insertSelective(articleContent);
@@ -250,7 +253,8 @@ public class ArticleServiceImpl implements ArticleService {
             throw new NoArticleContentException();
         }
 
-        articleDTO.setContent(listArticleContent.get(0).getContent());
+        //返回已经经过解析的html 文本
+        articleDTO.setContent(listArticleContent.get(0).getParsed_content());
 
         //tbl_category_article 信息
         ArticleCategoryExample articleCategoryExample = new ArticleCategoryExample();

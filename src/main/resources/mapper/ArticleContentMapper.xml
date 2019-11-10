@@ -8,7 +8,8 @@
     <result column="article_id" jdbcType="BIGINT" property="article_id" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="ml.sansejin.sancolor.entity.ArticleContent">
-    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="raw_content" jdbcType="LONGVARCHAR" property="raw_content" />
+    <result column="parsed_content" jdbcType="LONGVARCHAR" property="parsed_content" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -72,7 +73,7 @@
     id, create_by, modified_by, article_id
   </sql>
   <sql id="Blob_Column_List">
-    content
+    raw_content, parsed_content
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="ml.sansejin.sancolor.entity.ArticleContentExample" resultMap="ResultMapWithBLOBs">
     select
@@ -126,9 +127,9 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="ml.sansejin.sancolor.entity.ArticleContent" useGeneratedKeys="true">
     insert into tbl_article_content (create_by, modified_by, article_id, 
-      content)
+      raw_content, parsed_content)
     values (#{create_by,jdbcType=TIMESTAMP}, #{modified_by,jdbcType=TIMESTAMP}, #{article_id,jdbcType=BIGINT}, 
-      #{content,jdbcType=LONGVARCHAR})
+      #{raw_content,jdbcType=LONGVARCHAR}, #{parsed_content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="ml.sansejin.sancolor.entity.ArticleContent" useGeneratedKeys="true">
     insert into tbl_article_content
@@ -142,8 +143,11 @@
       <if test="article_id != null">
         article_id,
       </if>
-      <if test="content != null">
-        content,
+      <if test="raw_content != null">
+        raw_content,
+      </if>
+      <if test="parsed_content != null">
+        parsed_content,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -156,8 +160,11 @@
       <if test="article_id != null">
         #{article_id,jdbcType=BIGINT},
       </if>
-      <if test="content != null">
-        #{content,jdbcType=LONGVARCHAR},
+      <if test="raw_content != null">
+        #{raw_content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parsed_content != null">
+        #{parsed_content,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -176,8 +183,11 @@
       <if test="record.article_id != null">
         article_id = #{record.article_id,jdbcType=BIGINT},
       </if>
-      <if test="record.content != null">
-        content = #{record.content,jdbcType=LONGVARCHAR},
+      <if test="record.raw_content != null">
+        raw_content = #{record.raw_content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.parsed_content != null">
+        parsed_content = #{record.parsed_content,jdbcType=LONGVARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -190,7 +200,8 @@
       create_by = #{record.create_by,jdbcType=TIMESTAMP},
       modified_by = #{record.modified_by,jdbcType=TIMESTAMP},
       article_id = #{record.article_id,jdbcType=BIGINT},
-      content = #{record.content,jdbcType=LONGVARCHAR}
+      raw_content = #{record.raw_content,jdbcType=LONGVARCHAR},
+      parsed_content = #{record.parsed_content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -217,8 +228,11 @@
       <if test="article_id != null">
         article_id = #{article_id,jdbcType=BIGINT},
       </if>
-      <if test="content != null">
-        content = #{content,jdbcType=LONGVARCHAR},
+      <if test="raw_content != null">
+        raw_content = #{raw_content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parsed_content != null">
+        parsed_content = #{parsed_content,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -228,7 +242,8 @@
     set create_by = #{create_by,jdbcType=TIMESTAMP},
       modified_by = #{modified_by,jdbcType=TIMESTAMP},
       article_id = #{article_id,jdbcType=BIGINT},
-      content = #{content,jdbcType=LONGVARCHAR}
+      raw_content = #{raw_content,jdbcType=LONGVARCHAR},
+      parsed_content = #{parsed_content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="ml.sansejin.sancolor.entity.ArticleContent">

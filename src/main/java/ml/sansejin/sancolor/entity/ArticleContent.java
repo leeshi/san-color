@@ -11,7 +11,25 @@ public class ArticleContent {
 
     private Long article_id;
 
-    private String content;
+    private String raw_content;
+
+    private String parsed_content;
+
+    public String getRaw_content() {
+        return raw_content;
+    }
+
+    public void setRaw_content(String raw_content) {
+        this.raw_content = raw_content;
+    }
+
+    public String getParsed_content() {
+        return parsed_content;
+    }
+
+    public void setParsed_content(String parsed_content) {
+        this.parsed_content = parsed_content;
+    }
 
     public Long getId() {
         return id;
@@ -45,11 +63,4 @@ public class ArticleContent {
         this.article_id = article_id;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
-    }
 }
