@@ -54,20 +54,23 @@ public class AuthServiceImpl implements AuthService {
     public User register(User userToAdd) {
         final String userName = userToAdd.getName();
         //防止重复注册
+        //TODO 其实这段验证是毫无必要的，完全可以在前端就完成相应的检测
         if (userService.getUserByUserName(userName) != null){
             return null;
         }
 
         final String rawPassword = userToAdd.getPassword();
 
+        //TODO 更加细致的异常分类
         if (rawPassword == null) {
             return null;
         }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         //对密码进行加密
+        //为了 舍弃一些无用的信息，新建一个对象
+        userToAdd = new User();
         userToAdd.setPassword(encoder.encode(rawPassword));
-        userToAdd.setModified_by(new Date());
-        userToAdd.setRole("ROLE_USER");
+        userToAdd.setRole("ROLE_USER");  //默认具有普通用户权限
 
         userService.addUser(userToAdd);
 

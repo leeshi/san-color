@@ -35,7 +35,6 @@ public class CommentServiceImpl implements CommentService {
     public boolean addComment(CommentDTO commentDTO) {
         Comment comment = new Comment();
 
-        comment.setCreate_by(new Date());
         comment.setContent(commentDTO.getContent());
         comment.setEmail(commentDTO.getEmail());
         comment.setIp(commentDTO.getIp());

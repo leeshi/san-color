@@ -58,6 +58,7 @@ public class CommentController extends BaseController{
     //TODO 通过获取 token 中的信息来标记用户，因此就可以保证请求安全
     public ResponseEntity<Void> addComment(@RequestBody CommentDTO commentDTO) {
         try{
+            commentDTO.setIp(request.getRemoteAddr());
             commentService.addComment(commentDTO);
 
             logger.info(String.format("Add a comment! Comment:%s, ArticleId:%d", commentDTO.getContent(), commentDTO.getArticleId()));
@@ -65,7 +66,7 @@ public class CommentController extends BaseController{
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
             //如果不存在对应的comment或者article，就会返回异常码
-            logger.error(String.format("Trying to add a comment to article not exits! ArticleID:%d", commentDTO.getArticleId()));
+            logger.error(String.format("Attempting to add a comment to article not exits! ArticleID:%d", commentDTO.getArticleId()));
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
