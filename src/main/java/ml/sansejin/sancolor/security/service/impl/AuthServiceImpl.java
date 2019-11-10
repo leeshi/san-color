@@ -58,8 +58,12 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         final String rawPassword = userToAdd.getPassword();
+
+        if (rawPassword == null) {
+            return null;
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         //对密码进行加密
         userToAdd.setPassword(encoder.encode(rawPassword));
         userToAdd.setModified_by(new Date());

@@ -5,6 +5,7 @@ import ml.sansejin.sancolor.security.jwt.JwtAuthenticationResponse;
 import ml.sansejin.sancolor.security.service.AuthService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +48,7 @@ public class AuthController {
     }
 
     //刷新Token接口
+    //TODO 刷新 token 后使旧的token 过期
     @GetMapping(value = "/")
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request){
         //header有可能为空
@@ -62,8 +64,16 @@ public class AuthController {
     }
 
     //注册接口
-    @PostMapping(value = "register")
-    public User register(@RequestBody User user){
-        return authService.register(user);
+    @PostMapping(value = "/auth/user")
+    public ResponseEntity<?> register(@RequestBody User user){
+        User userAdded = authService.register(user);
+
+        if (userAdded == null) {
+            logger.info("Attempting to register a user already exits! User Name : " + user.getName());
+            return ResponseEntity.badRequest().body("User conflict");
+        } else {
+            logger.info("User added. User Name : " + user.getName());
+            return new ResponseEntity<>("Please log in with your username and password!", HttpStatus.CREATED);
+        }
     }
 }

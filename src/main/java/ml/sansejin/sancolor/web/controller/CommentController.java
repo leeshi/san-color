@@ -55,6 +55,7 @@ public class CommentController extends BaseController{
     }
 
     @PostMapping(value = "/")
+    //TODO 通过获取 token 中的信息来标记用户，因此就可以保证请求安全
     public ResponseEntity<Void> addComment(@RequestBody CommentDTO commentDTO) {
         try{
             commentService.addComment(commentDTO);
@@ -71,6 +72,7 @@ public class CommentController extends BaseController{
     }
 
     @PutMapping(value = "/{commentId}")
+    //TODO 只允许评论的所有者进行评论
     public ResponseEntity<Void> updateComment(@PathVariable Long commentId, @RequestBody CommentDTO commentDTO) {
         try {
             commentDTO.setCommentId(commentId);
