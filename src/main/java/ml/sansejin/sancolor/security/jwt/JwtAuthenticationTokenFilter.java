@@ -28,8 +28,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     UserDetailsService userDetailsService;
 
-    @Value("Authorization")
-    private String tokenHeader;
+    @Value("authorization")
+    private String tokenName;
 
     //加密后的头部
     @Value("Bear")
@@ -37,7 +37,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = httpServletRequest.getHeader(this.tokenHeader);
+        final String authHeader = httpServletRequest.getHeader(this.tokenName);
 
         if (authHeader != null && authHeader.startsWith(tokenHead)) {
             final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "

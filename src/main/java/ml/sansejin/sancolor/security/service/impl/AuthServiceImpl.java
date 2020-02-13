@@ -88,12 +88,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String refresh(String oldHeader) {
-        if (oldHeader == null){
-            return null;
-        }
-
-        final String oldToken = oldHeader.substring(tokenHead.length());
+    /*
+     * 为已经旧的cookie指定一个新的cookie。可以在重新访问网站后调用该接口，延长cookie的有效期限
+     */
+    public String refresh(String oldCookieValue) {
+        final String oldToken = oldCookieValue.substring(tokenHead.length());
         String username = JwtTokenUtil.getUsernameFromToken(oldToken);
         JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
         if (JwtTokenUtil.canTokenBeRefreshed(oldToken, user.getLastModifiedDate())){

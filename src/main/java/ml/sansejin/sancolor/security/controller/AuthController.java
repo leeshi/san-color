@@ -1,7 +1,6 @@
 package ml.sansejin.sancolor.security.controller;
 
 import ml.sansejin.sancolor.entity.User;
-import ml.sansejin.sancolor.security.jwt.JwtAuthenticationResponse;
 import ml.sansejin.sancolor.security.service.AuthService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author sansejin
@@ -23,26 +24,30 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthController {
     private static final Logger logger = Logger.getLogger(AuthController.class);
 
-
-    @Value("Authorization")
-    private String tokenHeader;
+    @Value("authorization")
+    private String tokenName;
 
     @Resource
     AuthService authService;
 
     //登录接口
     @PostMapping(value = "/", produces = {"application/json;charset=UTF-8"})
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody User user){
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody User user, HttpServletResponse response){
         //登录后返回Token
         logger.info(String.format("Authenticating user: \"%s\", password received: \"%s\"", user.getName(), user.getPassword()));
         final String token = authService.login(user.getName(), user.getPassword());
 
         if (token == null) {
             logger.info(String.format("Fail to generate token for user: \"%s\"", user.getName()));
-            return ResponseEntity.badRequest().body(null);
+            return new ResponseEntity<Void>(HttpStatus.UNAUTHORIZED);
         } else {
             logger.info(String.format("Success to generate token for user: \"%s\"  token: \"%s\"", user.getName(), token));
-            return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+            Cookie cookie = new Cookie(tokenName, token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+
+            response.addCookie(cookie);
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
 
     }
@@ -50,17 +55,39 @@ public class AuthController {
     //刷新Token接口
     //TODO 刷新 token 后使旧的token 过期
     @GetMapping(value = "/")
-    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request){
-        //header有可能为空
-        String token = request.getHeader(tokenHeader);
-        String refreshedToken = authService.refresh(token);
-
-        if (refreshedToken == null){
-            return ResponseEntity.badRequest().body("Validated token cannot be null.");
-        } else {
-            //刷新成功，返回新的token
-            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
+    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request, HttpServletResponse response){
+        //检测是否存在对应的cookie
+        String token  = null;
+        if (request.getCookies() != null) {
+           for (Cookie c : request.getCookies()) {
+               if (c.getName().equals(tokenName)) {
+                   System.out.println(c.getValue());
+                   token = c.getValue();
+                   break;
+               }
+           }
         }
+
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.badRequest().body("You are not signed in yet.");
+        } else if (token.length() != 192) {
+            return  ResponseEntity.badRequest().body("Incompatible cookie.");
+        } else {
+            String refreshedToken = authService.refresh(token);
+
+            if (refreshedToken == null){
+                return ResponseEntity.badRequest().body("You are not signed in yet.");
+            } else {
+                //刷新成功，返回新的token
+                Cookie cookie = new Cookie(tokenName, refreshedToken);
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
+
+                response.addCookie(cookie);
+                return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+            }
+        }
+
     }
 
     //注册接口
