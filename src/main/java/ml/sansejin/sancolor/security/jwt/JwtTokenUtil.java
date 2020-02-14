@@ -25,14 +25,27 @@ public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //加密要钥匙
-    private static final String secret = "Panda";
+    private static String secret;
+    @Value("${secret}")
+    public void setSecret(String val) {
+        secret = val;
+    }
 
-    private static final Long expiration = 3000L;
+    //三天后过期
+    private static Long expiration = 3000L;
+    @Value("${tokenExpiration}")
+    public void setExpiration(long val) {
+        expiration = val;
+    }
 
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
 
-    private static final String tokenHead = "Bear";
+    private static String tokenHead;
+    @Value("${tokenHead}")
+    public void setTokenHead(String val) {
+        tokenHead = val;
+    }
 
     private JwtTokenUtil() {
     }

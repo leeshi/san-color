@@ -28,11 +28,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     UserDetailsService userDetailsService;
 
-    @Value("authorization")
+    @Value("${tokenName")
     private String tokenName;
 
     //加密后的头部
-    @Value("Bear")
+    @Value("${tokenHead}")
     private String tokenHead;
 
     @Override
