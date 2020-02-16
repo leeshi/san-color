@@ -45,6 +45,7 @@ public class AuthController {
             Cookie cookie = new Cookie(tokenName, token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24 * 3);
 
             response.addCookie(cookie);
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
@@ -82,6 +83,7 @@ public class AuthController {
                 Cookie cookie = new Cookie(tokenName, refreshedToken);
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
+                cookie.setMaxAge(60 * 60 * 24 * 3);
 
                 response.addCookie(cookie);
                 return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);

@@ -22,6 +22,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
     @Resource
     UserService userService;
 
+    //TODO 直接使用dao进行数据库操作
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = userService.getUserByUserName(name);

@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     UserDetailsService userDetailsService;
 
-    @Value("${tokenName")
+    @Value("${tokenName}")
     private String tokenName;
 
     //加密后的头部
@@ -37,27 +38,38 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = httpServletRequest.getHeader(this.tokenName);
+        Cookie cookie = null;
+        Cookie[] cookies = httpServletRequest.getCookies();
+        //如果cookie是空，下面都不用验证了
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(tokenName)) {
+                    cookie = c;
+                    break;
+                }
+            }
+            final String authHeader = cookie != null ? cookie.getValue() : null;
 
-        if (authHeader != null && authHeader.startsWith(tokenHead)) {
-            final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
+            if (authHeader != null && authHeader.startsWith(tokenHead)) {
+                final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
 
-            String username = JwtTokenUtil.getUsernameFromToken(authToken);
+                String username = JwtTokenUtil.getUsernameFromToken(authToken);
 
-            logger.info("Checking authentication of USER:" + username);
+                logger.info("Checking authentication of USER:" + username);
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-                if (JwtTokenUtil.validateToken(authToken, userDetails)) {
+                    if (JwtTokenUtil.validateToken(authToken, userDetails)) {
 
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(
-                            httpServletRequest));
-                    logger.info("Authenticated user " + username + ", setting service context");
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(
+                                httpServletRequest));
+                        logger.info("Authenticated user " + username + ", setting service context");
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
             }
         }

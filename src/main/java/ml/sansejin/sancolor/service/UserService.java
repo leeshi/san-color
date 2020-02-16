@@ -11,6 +11,7 @@ import java.util.List;
  * @create 9/18/19 3:55 PM
  **/
 public interface UserService {
+    //TODO 因为User只用作身份验证，因此该service可以移动到security包下
     boolean addUser(User user);
 
     boolean updateUser(User user);
