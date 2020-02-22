@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private UserDetailsService userDetailsService;
     private UserService userService;
 
-    @Value("${tokenHead}")
+    @Value("${token.head}")
     private String tokenHead;
 
     @Resource

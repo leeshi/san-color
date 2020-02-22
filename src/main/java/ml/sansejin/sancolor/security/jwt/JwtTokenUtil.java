@@ -26,14 +26,14 @@ public class JwtTokenUtil implements Serializable {
 
     //加密要钥匙
     private static String secret;
-    @Value("${secret}")
+    @Value("${token.secret}")
     public void setSecret(String val) {
         secret = val;
     }
 
     //三天后过期
     private static Long expiration = 3000L;
-    @Value("${tokenExpiration}")
+    @Value("${token.expiration}")
     public void setExpiration(long val) {
         expiration = val;
     }
@@ -42,7 +42,7 @@ public class JwtTokenUtil implements Serializable {
     private static final String CLAIM_KEY_CREATED = "created";
 
     private static String tokenHead;
-    @Value("${tokenHead}")
+    @Value("${token.head}")
     public void setTokenHead(String val) {
         tokenHead = val;
     }

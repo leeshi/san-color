@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthController {
     private static final Logger logger = Logger.getLogger(AuthController.class);
 
-    @Value("${tokenName}")
+    @Value("${token.name}")
     private String tokenName;
 
     @Resource
