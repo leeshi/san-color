@@ -31,8 +31,15 @@ public class JwtTokenUtil implements Serializable {
         secret = val;
     }
 
-    //三天后过期
-    private static Long expiration = 3000L;
+    //token存活期
+    private static Long alive;
+    @Value("${token.alive}")
+    public void setAlive(long val) {
+        alive = val;
+    }
+
+    //token过期时间
+    private static Long expiration;
     @Value("${token.expiration}")
     public void setExpiration(long val) {
         expiration = val;
@@ -61,14 +68,17 @@ public class JwtTokenUtil implements Serializable {
         return username;
     }
 
+    /*
+     * 验证token是否有效，并且在token存活期内不会刷新token，若在刷新时间内再次访问，那么就会进行一次刷新
+     * 如果超过刷新时间，那么该token就过期
+     */
     public static boolean validateToken(String token, UserDetails userDetails){
         JwtUser user = (JwtUser) userDetails;
         final String username = getUsernameFromToken(token);
         final Date created = getCreatedDateFromToken(token);
 
-        return (
-                username.equals(user.getUsername())
-                        && !isTokenExpired(token)
+        return (username.equals(user.getUsername())
+                        && !isTokenExpired(created)
                         && !isCreatedBeforeLastPasswordReset(created, user.getLastModifiedDate()));
     }
 
@@ -89,8 +99,10 @@ public class JwtTokenUtil implements Serializable {
 
     public static boolean canTokenBeRefreshed(String token, Date lastModifiedDate){
         final Date created = getCreatedDateFromToken(token);
+
         return !isCreatedBeforeLastPasswordReset(created, lastModifiedDate)
-                && !isTokenExpired(token);
+                && !isTokenAlive(created)       //存活期内不可以刷新
+                && !isTokenExpired(created);    //没过期
     }
 
     public static String refreshToken(String oldToken){
@@ -107,16 +119,19 @@ public class JwtTokenUtil implements Serializable {
 
 
     private static Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + expiration * 1000);
+        return new Date(System.currentTimeMillis() + (expiration + alive) * 1000);
     }
 
-    private static Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+    private static boolean isTokenExpired(Date created) {
+        Date expirationDate = new Date(System.currentTimeMillis() - (expiration + alive) * 1000);
+        return created.before(expirationDate);
     }
 
+    private static boolean isTokenAlive(Date created) {
+        return !created.before(new Date(System.currentTimeMillis() - alive * 1000));
+    }
 
-    private static Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
+    private static boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         if (lastPasswordReset == null) {
             return false;
         } else {

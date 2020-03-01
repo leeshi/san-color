@@ -57,6 +57,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
                 logger.info("Checking authentication of USER:" + username);
 
+                //将SecurityContext恢复出来，如果 SecurityContext == null 就设置认证信息
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);

@@ -89,13 +89,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     /*
-     * 为已经旧的cookie指定一个新的cookie。可以在重新访问网站后调用该接口，延长cookie的有效期限
+     * 在有效期内均可以访问该接口进行刷新token，包括刷新期与有效期
      */
     public String refresh(String oldCookieValue) {
         final String oldToken = oldCookieValue.substring(tokenHead.length());
         String username = JwtTokenUtil.getUsernameFromToken(oldToken);
         JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-        if (JwtTokenUtil.canTokenBeRefreshed(oldToken, user.getLastModifiedDate())){
+        if (JwtTokenUtil.isTokenExpired()){
             return JwtTokenUtil.refreshToken(oldToken);
         }
         return null;

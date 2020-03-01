@@ -62,7 +62,6 @@ public class AuthController {
         if (request.getCookies() != null) {
            for (Cookie c : request.getCookies()) {
                if (c.getName().equals(tokenName)) {
-                   System.out.println(c.getValue());
                    token = c.getValue();
                    break;
                }
@@ -77,7 +76,7 @@ public class AuthController {
             String refreshedToken = authService.refresh(token);
 
             if (refreshedToken == null){
-                return ResponseEntity.badRequest().body("You are not signed in yet.");
+                return ResponseEntity.badRequest().body("Fail to refresh. Your token may be expired!");
             } else {
                 //刷新成功，返回新的token
                 Cookie cookie = new Cookie(tokenName, refreshedToken);
