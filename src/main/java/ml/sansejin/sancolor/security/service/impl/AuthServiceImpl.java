@@ -77,27 +77,67 @@ public class AuthServiceImpl implements AuthService {
         return userToAdd;
     }
 
+    /**
+     * 根据用户提交的表单生成一个token，并且将该token加入到白名单中
+     * @param userName
+     * @param password
+     * @return token
+     */
     @Override
-    public String login(String username, String password) {
-        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
+    public String login(String userName, String password) {
+        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(userName, password);
+        //通过password，name验证用户
         final Authentication authentication = authenticationManager.authenticate(upToken);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return JwtTokenUtil.generateToken(userDetails);
+        //获得用户的信息类以进行token生成
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+        //生成token
+        String token = JwtTokenUtil.generateToken(userDetails);
+        JwtTokenUtil.setTokenInWhiteList(token.substring(tokenHead.length()), userName);  //添加token到白名单中
+
+        return token;
     }
 
-    @Override
-    /*
-     * 在有效期内均可以访问该接口进行刷新token，包括刷新期与有效期
+    /**
+     * 刷新token
+     * @param oldCookieValue
+     * @return null 如果不可以刷新，需要重置客户端的cookie
+     *         token 如果刷新成功
      */
+    @Override
     public String refresh(String oldCookieValue) {
         final String oldToken = oldCookieValue.substring(tokenHead.length());
-        String username = JwtTokenUtil.getUsernameFromToken(oldToken);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-        if (JwtTokenUtil.isTokenExpired()){
-            return JwtTokenUtil.refreshToken(oldToken);
+        String userName = JwtTokenUtil.getUsernameFromToken(oldToken);  //获取token的name
+        Date created = JwtTokenUtil.getCreatedDateFromToken(oldToken);  //获取token的创建日期
+        //如果不能从token获取date与name，那么表示该token不合法
+        if (created == null || userName == null) {
+            return null;
         }
-        return null;
+        //检查token是否在白名单中，如果不在，则不接受该token
+        if (!JwtTokenUtil.isTokenInWhiteList(oldToken, userName)) {
+            return null;
+        }
+
+        //检查token是否已经过期
+        if (JwtTokenUtil.isTokenExpired(created)) {
+            //token已经过期，清空白名单中的内容
+            JwtTokenUtil.setTokenInWhiteList(userName, null);
+            return null;
+        }
+
+        //如果token在存活期内，那么就直接返回旧值
+        if (JwtTokenUtil.isTokenAlive(created)) {
+            return oldToken;
+        }
+
+        //token既没有过期也不在存活期内，那么就在刷新期内，进行刷新
+        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(userName);
+        String newToken = JwtTokenUtil.generateToken(user);  //获得新的token
+        //加入新的token到白名单中
+        JwtTokenUtil.setTokenInWhiteList(newToken, userName);
+
+        return newToken;
     }
 }

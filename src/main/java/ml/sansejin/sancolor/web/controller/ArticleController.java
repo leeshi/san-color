@@ -21,6 +21,10 @@ import java.util.List;
 public class ArticleController extends BaseController {
     private static final Logger logger = Logger.getLogger(ArticleController.class);
 
+    /**
+     * 获取所有的文章
+     * @return ResponseEntity<List<ArticleDTO>>
+     */
     @GetMapping(value = "/", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<List<ArticleDTO>> fetchAllArticles(){
         List<ArticleDTO> listArticleDTO = articleService.listLatesetArticles();
@@ -31,7 +35,7 @@ public class ArticleController extends BaseController {
     /**
      * 通过分类id获取所有文章
      * @param categoryId
-     * @return
+     * @return ResponseEntity<List<ArticleDTO>>
      */
     @GetMapping(value = "/category/{categoryId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<List<ArticleDTO>> fetchArticlesOfCategory (@PathVariable Long categoryId) {
@@ -43,7 +47,7 @@ public class ArticleController extends BaseController {
     /**
      * 获取一篇文章
      * @param id
-     * @return
+     * @return ResponseEntity<ArticleDTO>
      */
     @GetMapping(value = "/{articleId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<ArticleDTO> fetchArticle(@PathVariable Long articleId){
@@ -68,7 +72,8 @@ public class ArticleController extends BaseController {
     /**
      * 增加一篇文章
      * @param articleDTO
-     * @return
+     * @return ResponseEntity
+     * TODO 从token中获取user的id，不再从DTO中获取
      */
     @PostMapping(value = "/", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> addArticle(@RequestBody ArticleDTO articleDTO){
@@ -78,6 +83,11 @@ public class ArticleController extends BaseController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * 根据id删除一篇文章
+     * @param articleId
+     * @return ResponseEntity<Void>
+     */
     @DeleteMapping("/{articleId}")
     public ResponseEntity<Void> deleteArticle(@PathVariable Long articleId){
         articleService.deleteArticleById(articleId);
@@ -86,6 +96,12 @@ public class ArticleController extends BaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 根据id更新一篇文章
+     * @param articleId
+     * @param articleDTO
+     * @return ResponseEntity<Void>
+     */
     @PutMapping(value = "/{articleId}",produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> updateArticle(@PathVariable Long articleId, @RequestBody ArticleDTO articleDTO){
         if (!articleService.isArticleExit(articleId)){

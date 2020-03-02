@@ -4,10 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import ml.sansejin.sancolor.security.model.JwtUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +25,17 @@ import java.util.Map;
 
 @Component
 public class JwtTokenUtil implements Serializable {
+    //保存一个JwtTokenUtil实例，静态方法可以通过该对象访问redisTemplate
+    private static JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    //PostConstruct只会被运行一次，将RedisTemplate实例注入到JwtTokenUtil实例中
+    @PostConstruct
+    public void init() {
+        jwtTokenUtil = this;
+        jwtTokenUtil.redisTemplate = this.redisTemplate;
+    }
+
     private static final long serialVersionUID = 1L;
 
     //加密要钥匙
@@ -57,6 +71,11 @@ public class JwtTokenUtil implements Serializable {
     private JwtTokenUtil() {
     }
 
+    /**
+     * 从token中获取username
+     * @param token
+     * @return String
+     */
     public static String getUsernameFromToken(String token){
         String username;
         try {
@@ -68,9 +87,61 @@ public class JwtTokenUtil implements Serializable {
         return username;
     }
 
-    /*
-     * 验证token是否有效，并且在token存活期内不会刷新token，若在刷新时间内再次访问，那么就会进行一次刷新
-     * 如果超过刷新时间，那么该token就过期
+    /**
+     * 从token中获取createdDate
+     * @param token
+     * @return Date
+     */
+    public static Date getCreatedDateFromToken(String token) {
+        Date created;
+        try {
+            final Claims claims = getClaimsFromToken(token);
+            created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
+        } catch (Exception e) {
+            created = null;
+        }
+        return created;
+    }
+
+    private static Claims getClaimsFromToken(String token) {
+        Claims claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            claims = null;
+        }
+        return claims;
+    }
+
+    /**
+     * 检查Token是否在白名单中。使用userName作为key。如果白名单中没有响应的记录，那么就返回true
+     * @param token
+     * @param userName
+     * @return boolean
+     * TODO 使用userId作为key
+     */
+    public static boolean isTokenInWhiteList(String token, String userName) {
+        String savedToken = (String)jwtTokenUtil.redisTemplate.opsForValue().get(userName);
+        return savedToken != null && savedToken.equals(token);
+    }
+
+    /**
+     * 设置userName对应的token，在任意时刻，每个用户只接受一个token，其他的token就算合法也不会被接受
+     * @param token
+     * @param userName
+     */
+    public static void setTokenInWhiteList(String token, String userName) {
+        jwtTokenUtil.redisTemplate.opsForValue().set(userName, token);
+    }
+
+    /**
+     * 验证token是否有效，并且在token存活期内不会刷新token，若在刷新时间内再次访问，那么就会进行一次刷，如果超过刷新时间，那么该token就过期
+     * @param token
+     * @param userDetails
+     * @return boolean
      */
     public static boolean validateToken(String token, UserDetails userDetails){
         JwtUser user = (JwtUser) userDetails;
@@ -97,37 +168,16 @@ public class JwtTokenUtil implements Serializable {
                 .compact();
     }
 
-    public static boolean canTokenBeRefreshed(String token, Date lastModifiedDate){
-        final Date created = getCreatedDateFromToken(token);
-
-        return !isCreatedBeforeLastPasswordReset(created, lastModifiedDate)
-                && !isTokenAlive(created)       //存活期内不可以刷新
-                && !isTokenExpired(created);    //没过期
-    }
-
-    public static String refreshToken(String oldToken){
-        String refreshedToken;
-        try {
-            final Claims claims = getClaimsFromToken(oldToken);
-            claims.put(CLAIM_KEY_CREATED, new Date());
-            refreshedToken = generateToken(claims);
-        } catch (Exception e) {
-            refreshedToken = null;
-        }
-        return refreshedToken;
-    }
-
-
     private static Date generateExpirationDate() {
         return new Date(System.currentTimeMillis() + (expiration + alive) * 1000);
     }
 
-    private static boolean isTokenExpired(Date created) {
+    public static boolean isTokenExpired(Date created) {
         Date expirationDate = new Date(System.currentTimeMillis() - (expiration + alive) * 1000);
         return created.before(expirationDate);
     }
 
-    private static boolean isTokenAlive(Date created) {
+    public static boolean isTokenAlive(Date created) {
         return !created.before(new Date(System.currentTimeMillis() - alive * 1000));
     }
 
@@ -139,38 +189,4 @@ public class JwtTokenUtil implements Serializable {
         }
     }
 
-    private static Date getExpirationDateFromToken(String token) {
-        Date expiration;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            expiration = claims.getExpiration();
-        } catch (Exception e) {
-            expiration = null;
-        }
-        return expiration;
-    }
-
-    private static Date getCreatedDateFromToken(String token) {
-        Date created;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
-        } catch (Exception e) {
-            created = null;
-        }
-        return created;
-    }
-
-    private static Claims getClaimsFromToken(String token) {
-        Claims claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            claims = null;
-        }
-        return claims;
-    }
 }

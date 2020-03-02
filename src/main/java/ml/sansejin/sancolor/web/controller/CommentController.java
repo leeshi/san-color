@@ -20,6 +20,11 @@ import java.util.List;
 public class CommentController extends BaseController{
     private static final Logger logger = Logger.getLogger(CommentController.class);
 
+    /**
+     * 获取所有的comment
+     * @return ResponseEntity<List<CommentDTO>>
+     * TODO 修改成获取最新的评论
+     */
     @GetMapping(value = "/")
     public ResponseEntity<List<CommentDTO>> fetchAllComments() {
         List<CommentDTO> listCommentDTO;
@@ -30,6 +35,11 @@ public class CommentController extends BaseController{
         return new ResponseEntity<>(listCommentDTO, HttpStatus.OK);
     }
 
+    /**
+     * 获取对应文章的评论
+     * @param articleId
+     * @return ResponseEntity<Integer>
+     */
     @GetMapping(value = "/count/{articleId}")
     public ResponseEntity<Integer> fetchCountOfArticle(@PathVariable Long articleId) {
         Integer count = commentService.getCommentCountByArticleId(articleId);
@@ -38,6 +48,12 @@ public class CommentController extends BaseController{
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
+    /**
+     * 获取文章的所有评论
+     * @param articleId
+     * @return ResponseEntity<List<CommentDTO>>
+     * TODO 评论分页
+     */
     @GetMapping(value = "/article/{articleId}")
     public ResponseEntity<List<CommentDTO>> fetchCommentByArticleId(@PathVariable Long articleId) {
         List<CommentDTO> listCommentDTO = commentService.listAllCommentsByArticleId(articleId);
@@ -54,8 +70,13 @@ public class CommentController extends BaseController{
         }
     }
 
+    /**
+     * 为文章添加评论
+     * @param commentDTO
+     * @return ResponseEntity<Void>
+     * TODO 通过token解析用户，而不是通过DTO中的用户id
+     */
     @PostMapping(value = "/")
-    //TODO 通过获取 token 中的信息来标记用户，因此就可以保证请求安全
     public ResponseEntity<Void> addComment(@RequestBody CommentDTO commentDTO) {
         try{
             commentDTO.setIp(request.getRemoteAddr());
@@ -72,8 +93,14 @@ public class CommentController extends BaseController{
         }
     }
 
+    /**
+     * 修改评论
+     * @param commentId
+     * @param commentDTO
+     * @return ResponseEntity<Void>
+     * TODO 只允许评论者丢评论进行修改
+     */
     @PutMapping(value = "/{commentId}")
-    //TODO 只允许评论的所有者进行评论
     public ResponseEntity<Void> updateComment(@PathVariable Long commentId, @RequestBody CommentDTO commentDTO) {
         try {
             commentDTO.setCommentId(commentId);
@@ -89,6 +116,12 @@ public class CommentController extends BaseController{
         }
     }
 
+    /**
+     * 根据id删除评论
+     * @param commentId
+     * @return ResponseEntity<Void>
+     * TODO 只有评论者才可以删除自己的评论
+     */
     @DeleteMapping(value = "/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
         boolean rs = commentService.deleteCommentById(commentId);

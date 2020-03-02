@@ -63,6 +63,24 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 加入Redis的依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <!-- 不依赖Redis的异步客户端lettuce -->
+            <exclusions>
+                <exclusion>
+                    <groupId>io.lettuce</groupId>
+                    <artifactId>lettuce-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 引入Redis的客户端驱动jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+
         <!--SpringBoot热部署-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

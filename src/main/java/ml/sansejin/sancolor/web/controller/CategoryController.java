@@ -20,6 +20,10 @@ import java.util.List;
 public class CategoryController extends BaseController {
     private static final Logger logger = Logger.getLogger(CategoryController.class);
 
+    /**
+     * 获取所有分类
+     * @return ResponseEntity<List<CategoryDTO>>
+     */
     @GetMapping(value = "/", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<List<CategoryDTO>> fetchAllCategories(){
         List<CategoryDTO> listCategoryDTO = categoryService.listAllCategories();
@@ -28,6 +32,11 @@ public class CategoryController extends BaseController {
         return new ResponseEntity<>(listCategoryDTO, HttpStatus.OK);
     }
 
+    /**
+     * 根据id获取分类
+     * @param categoryId
+     * @return ResponseEntity<CategoryDTO>
+     */
     @GetMapping(value = "/{categoryId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<CategoryDTO> fetchCategory(@PathVariable Long categoryId){
         CategoryDTO categoryDTO = categoryService.getCategoryById(categoryId);
@@ -41,6 +50,11 @@ public class CategoryController extends BaseController {
         }
     }
 
+    /**
+     * 根据id删除一个分类
+     * @param categoryId
+     * @return ResponseEntity<Void>
+     */
     @DeleteMapping(value = "/{categoryId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> deleteCategory(@PathVariable Long categoryId){
         if (!categoryService.ifCategoryExit(categoryId)){
@@ -60,6 +74,12 @@ public class CategoryController extends BaseController {
         }
     }
 
+    /**
+     * 新增一个分类
+     * @param categoryDTO
+     * @return ResponseEntity<Void>
+     * TODO 只有ROLE_ADMIN才能增加分类
+     */
     @PostMapping(value = "/", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> addCategory(@RequestBody CategoryDTO categoryDTO){
         if (categoryService.addCategory(categoryDTO)){
@@ -71,6 +91,13 @@ public class CategoryController extends BaseController {
         }
     }
 
+    /**
+     * 根据id更新分类
+     * @param categoryId
+     * @param categoryDTO
+     * @return ResponseEntity<Void>
+     * TODO 只有ROLE_ADMIN才能更新分类
+     */
     @PutMapping(value = "/{categoryId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> updateCategory(@PathVariable Long categoryId, @RequestBody CategoryDTO categoryDTO){
         if (categoryService.updateCategory(categoryId, categoryDTO)){
@@ -82,6 +109,13 @@ public class CategoryController extends BaseController {
         }
     }
 
+    /**
+     * 将对应id的文章归属到某个分类中
+     * @param articleId
+     * @param listCategoryId
+     * @return ResponseEntity<Void>
+     * TODO 只有文章的创建者或者ROLE_ADMIN才能修改文章信息
+     */
     @PutMapping(value = "/article/{articleId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<Void> updateArticleCategory(@PathVariable Long articleId, @RequestBody List<Long> listCategoryId){
         if (!articleService.isArticleExit(articleId)){
