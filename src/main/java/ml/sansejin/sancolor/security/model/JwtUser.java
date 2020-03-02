@@ -14,13 +14,13 @@ import java.util.Date;
  * @create 10/15/19 3:54 PM
  **/
 public class JwtUser implements UserDetails {
-    private final Integer id;
+    private final Long id;
     private final String userName;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private final Date lastModifiedDate;
 
-    public JwtUser(Integer id,
+    public JwtUser(Long id,
                    String username,
                    String password,
                    Collection<? extends GrantedAuthority> authorities,
@@ -30,6 +30,10 @@ public class JwtUser implements UserDetails {
         this.password = password;
         this.authorities = authorities;
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     @Override

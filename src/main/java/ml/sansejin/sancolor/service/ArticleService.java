@@ -11,11 +11,11 @@ import java.util.List;
  */
 
 public interface ArticleService {
-    boolean addArticle(ArticleDTO articleDTO);
+    boolean addArticle(ArticleDTO articleDTO, String userName);
 
-    boolean deleteArticleById(Long id);
+    boolean deleteArticleById(Long id, String userName);
 
-    boolean updateArticle(Long articleId, ArticleDTO articleDTO);
+    boolean updateArticle(Long articleId, ArticleDTO articleDTO, String userName);
 
     boolean updateArticlePicture(Long articleId, String pictureUrl);
 

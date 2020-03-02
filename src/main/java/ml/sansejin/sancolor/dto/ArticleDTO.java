@@ -16,8 +16,9 @@ public class ArticleDTO {
     private Date createBy;
     private Date modifiedBy;
 
-    //tbl_article_user基础字段
-    private Long userId;
+
+    /*//tbl_article_user基础字段
+    private Long userId; */
     private String userName;
 
     //tbl_article_content基础字段
@@ -85,22 +86,6 @@ public class ArticleDTO {
         this.modifiedBy = modifiedBy;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getContent() {
         return content;
     }
@@ -126,4 +111,11 @@ public class ArticleDTO {
     }
 
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }

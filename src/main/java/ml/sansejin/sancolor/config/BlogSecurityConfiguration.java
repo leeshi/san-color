@@ -70,7 +70,7 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET).permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/auth/**").hasRole("USER")
-                .anyRequest().hasRole("ADMIN");
+                .anyRequest().hasRole("USER");
 
         //禁用缓存
         httpSecurity.headers().cacheControl();

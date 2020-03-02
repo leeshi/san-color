@@ -70,8 +70,6 @@ public class AuthController {
 
         if (token == null || token.isEmpty()) {
             return ResponseEntity.badRequest().body("You are not signed in yet.");
-        } else if (token.length() != 192) {
-            return  ResponseEntity.badRequest().body("Incompatible cookie.");
         } else {
             String refreshedToken = authService.refresh(token);
 

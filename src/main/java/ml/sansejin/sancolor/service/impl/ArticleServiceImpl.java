@@ -49,11 +49,12 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional
-    public boolean addArticle(@NotNull ArticleDTO articleDTO) {
+    public boolean addArticle(@NotNull ArticleDTO articleDTO, String userName) {
         //------------------------插入tbl_article_info 记录--------------------------------
         Article article = new Article();
         Date addDate = new Date();
 
+        //使用添加的日期来获取找回添加后的文章实体
         article.setSummary(articleDTO.getSummary());
         article.setTitle(articleDTO.getTitle());
         article.setVisibillity(articleDTO.getVisibillity());
@@ -85,16 +86,21 @@ public class ArticleServiceImpl implements ArticleService {
         articleContentMapper.insertSelective(articleContent);
 
         //------------------------插入tbl_article_user 记录--------------------------------
+        //根据user_name获取user对象
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andNameEqualTo(userName);
+        //TODO 增加安全检查，防止userName不存在而发生错误
+        User user = userMapper.selectByExample(userExample).get(0);
+
         ArticleUser articleUser = new ArticleUser();
         articleUser.setArticle_id(article.getId());
-        articleUser.setUser_id(articleDTO.getUserId());
-        articleUser.setCreate_by(new Date());
+        articleUser.setUser_id(user.getId());
 
         articleUserMapper.insertSelective(articleUser);
 
         //------------------------插入tbl_article_pic 记录---------------------------------
         //如果图片地址不为空
-        if(articleDTO.getPictureUrl().equals("") && articleDTO.getPictureUrl() != null){
+        if(articleDTO.getPictureUrl() != null && !articleDTO.getPictureUrl().equals("")){
 
             ArticlePicture articlePicture = new ArticlePicture();
 
@@ -106,10 +112,10 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         //------------------------插入tbl_category_article 记录----------------------------
+        //TODO 检查category是否存在
         if (articleDTO.getCategoryId() != null){
             ArticleCategory articleCategory = new ArticleCategory();
 
-            articleCategory.setCreate_by(new Date());
             articleCategory.setCateory_id(articleDTO.getCategoryId());
             articleCategory.setArticle_id(article.getId());
 
@@ -127,11 +133,21 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional
-    public boolean deleteArticleById(Long id) {
-        //其他记录将会被级联删除！！
-        articleMapper.deleteByPrimaryKey(id);
+    public boolean deleteArticleById(Long id, String userName) {
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andNameEqualTo(userName);
+        //TODO 增加安全检查，防止userName不存在而发生错误
+        User user = userMapper.selectByExample(userExample).get(0);
 
-        return true;
+        ArticleUserExample articleUserExample = new ArticleUserExample();
+        articleUserExample.createCriteria().andArticle_idEqualTo(id);
+        if (articleUserMapper.selectByExample(articleUserExample).get(0).getUser_id() == user.getId()) {
+            articleMapper.deleteByPrimaryKey(id);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -142,7 +158,17 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional
-    public boolean updateArticle(Long articleId, ArticleDTO articleDTO) {
+    public boolean updateArticle(Long articleId, ArticleDTO articleDTO, String userName) {
+        //检查用户是否有权修改文章
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andNameEqualTo(userName);
+        User user = userMapper.selectByExample(userExample).get(0);
+
+        ArticleUserExample articleUserExample = new ArticleUserExample();
+        articleUserExample.createCriteria().andArticle_idEqualTo(articleId);
+        if (articleUserMapper.selectByExample(articleUserExample).get(0).getUser_id() != user.getId()) {
+            return false;
+        }
         //新建一个Article对象
         Article article = new Article();
 
@@ -154,9 +180,18 @@ public class ArticleServiceImpl implements ArticleService {
         article.setTitle(articleDTO.getTitle());
         article.setVisibillity(articleDTO.getVisibillity());
         article.setSummary(articleDTO.getSummary());
-
+        //插入到tbl_article_info中
         articleMapper.updateByPrimaryKeySelective(article);
 
+        //新建一个tbl_article_content
+        ArticleContent articleContent = new ArticleContent();
+        articleContent.setRaw_content(articleDTO.getContent());
+        articleContent.setParsed_content(MarkdownUtil.parseMarkdown(articleDTO.getContent()));
+
+        ArticleContentExample articleContentExample = new ArticleContentExample();
+        articleContentExample.createCriteria().andArticle_idEqualTo(articleId);
+
+        articleContentMapper.updateByExampleSelective(articleContent, articleContentExample);
         return true;
     }
 
@@ -221,9 +256,10 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     * TODO 由于数据库设计不合理，用户名还不可以进行显示
+     *
      * @param articleId
      * @return ArticleDTO
+     * TODO 使用连接操作来获取DTO
      */
     @Override
     @Transactional
@@ -288,7 +324,6 @@ public class ArticleServiceImpl implements ArticleService {
             //TODO 修改为正确的数据类型
             User user = userMapper.selectByPrimaryKey(userId.intValue());
 
-            articleDTO.setUserId(listUser.get(0).getUser_id());
             articleDTO.setUserName(user.getName());
         }
 

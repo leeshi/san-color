@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 public class User {
-    private Integer id;
+    @JsonIgnore
+    private Long id;
 
     private String password;
 
@@ -39,11 +40,11 @@ public class User {
         this.role = roles;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

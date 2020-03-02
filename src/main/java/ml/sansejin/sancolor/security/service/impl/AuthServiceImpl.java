@@ -68,13 +68,15 @@ public class AuthServiceImpl implements AuthService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         //对密码进行加密
         //为了 舍弃一些无用的信息，新建一个对象
-        userToAdd = new User();
-        userToAdd.setPassword(encoder.encode(rawPassword));
-        userToAdd.setRole("ROLE_USER");  //默认具有普通用户权限
+        User user = new User();
+        user.setPassword(encoder.encode(rawPassword));
+        user.setName(userToAdd.getName());
+        user.setRole("ROLE_USER");  //默认具有普通用户权限
 
-        userService.addUser(userToAdd);
+        userService.addUser(user);
 
-        return userToAdd;
+        //返回修改后的user对象
+        return user;
     }
 
     /**

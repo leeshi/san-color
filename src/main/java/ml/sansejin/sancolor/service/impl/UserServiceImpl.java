@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean addUser(User user) {
+        System.out.println(user.getName());
         userMapper.insertSelective(user);
         return true;
     }
