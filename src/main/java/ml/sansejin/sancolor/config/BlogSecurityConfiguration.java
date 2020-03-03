@@ -1,6 +1,7 @@
 package ml.sansejin.sancolor.config;
 
 import ml.sansejin.sancolor.security.jwt.JwtAuthenticationTokenFilter;
+import ml.sansejin.sancolor.util.SpringContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,11 +60,10 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure (HttpSecurity httpSecurity) throws Exception{
         httpSecurity
                 .csrf().disable()
-
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                //一直保存用户认证信息
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
 
                 .authorizeRequests()
-
                 // 匹配url
                 // GET 请求全部允许
                 // auth 的 POST 请求用于注册帐号
@@ -77,11 +77,11 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         //注入过滤器
         httpSecurity
-                .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
-    public JwtAuthenticationTokenFilter authenticationTokenFilter() {
+    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
         return new JwtAuthenticationTokenFilter();
     }
 }

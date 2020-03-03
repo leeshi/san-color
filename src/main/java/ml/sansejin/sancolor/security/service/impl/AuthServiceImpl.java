@@ -114,11 +114,8 @@ public class AuthServiceImpl implements AuthService {
         String userName = JwtTokenUtil.getUsernameFromToken(oldToken);  //获取token的name
         Date created = JwtTokenUtil.getCreatedDateFromToken(oldToken);  //获取token的创建日期
         //如果不能从token获取date与name，那么表示该token不合法
-        if (created == null || userName == null) {
-            return null;
-        }
         //检查token是否在白名单中，如果不在，则不接受该token
-        if (!JwtTokenUtil.isTokenInWhiteList(oldToken, userName)) {
+        if ((created == null || userName == null) && !JwtTokenUtil.isTokenInWhiteList(oldToken, userName)) {
             return null;
         }
 
@@ -129,16 +126,16 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
 
-        //如果token在存活期内，那么就直接返回旧值
+        //如果token在存活期内，那么就直接返回旧值，注意是cookie的原值
         if (JwtTokenUtil.isTokenAlive(created)) {
-            return oldToken;
+            return oldCookieValue;
         }
 
         //token既没有过期也不在存活期内，那么就在刷新期内，进行刷新
         JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(userName);
         String newToken = JwtTokenUtil.generateToken(user);  //获得新的token
         //加入新的token到白名单中
-        JwtTokenUtil.setTokenInWhiteList(newToken, userName);
+        JwtTokenUtil.setTokenInWhiteList(newToken.substring(tokenHead.length()), userName);
 
         return newToken;
     }

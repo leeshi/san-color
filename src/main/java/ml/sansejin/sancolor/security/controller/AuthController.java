@@ -45,6 +45,7 @@ public class AuthController {
             Cookie cookie = new Cookie(tokenName, token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
+            //TODO 设置正确的age
             cookie.setMaxAge(60 * 60 * 24 * 3);
 
             response.addCookie(cookie);
