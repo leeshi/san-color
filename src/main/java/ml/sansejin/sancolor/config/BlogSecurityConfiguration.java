@@ -3,6 +3,7 @@ package ml.sansejin.sancolor.config;
 import ml.sansejin.sancolor.security.jwt.JwtAuthenticationTokenFilter;
 import ml.sansejin.sancolor.util.SpringContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,6 +34,10 @@ import javax.annotation.Resource;
 public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Resource
     UserDetailsService userDetailsService;
+
+    //api前缀
+    @Value("${api.prefix}")
+    private String apiPrefix;
 
     @Bean
     @Override
@@ -70,7 +75,12 @@ public class BlogSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET).permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/auth/**").hasRole("USER")
+                //只有ADMIN才可以控制category
+                .antMatchers(HttpMethod.POST, apiPrefix + "/category/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, apiPrefix + "/category/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, apiPrefix + "/category/**").hasRole("ADMIN")
                 .anyRequest().hasRole("USER");
+
 
         //禁用缓存
         httpSecurity.headers().cacheControl();

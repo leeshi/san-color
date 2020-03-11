@@ -91,7 +91,7 @@ public class AuthController {
     }
 
     //注册接口
-    @PostMapping(value = "/auth/user")
+    @PostMapping(value = "/user")
     public ResponseEntity<?> register(@RequestBody User user){
         User userAdded = authService.register(user);
 
