@@ -56,6 +56,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setTitle(articleDTO.getTitle());
         article.setVisibillity(articleDTO.getVisibillity());
         article.setCreate_by(addDate);
+        article.setUser_name(userName);
 
         articleMapper.insertSelective(article);
 
@@ -81,19 +82,6 @@ public class ArticleServiceImpl implements ArticleService {
         articleContent.setArticle_id(article.getId());
 
         articleContentMapper.insertSelective(articleContent);
-
-        //------------------------插入tbl_article_user 记录--------------------------------
-        //根据user_name获取user对象
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andNameEqualTo(userName);
-        //TODO 增加安全检查，防止userName不存在而发生错误
-        User user = userMapper.selectByExample(userExample).get(0);
-
-        ArticleUser articleUser = new ArticleUser();
-        articleUser.setArticle_id(article.getId());
-        articleUser.setUser_id(user.getId());
-
-        articleUserMapper.insertSelective(articleUser);
 
         //------------------------插入tbl_article_pic 记录---------------------------------
         //如果图片地址不为空
@@ -125,21 +113,15 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * 根据id删除一篇文章
-     * @param id
+     * @param articleId
      * @return boolean
      */
     @Override
     @Transactional
-    public boolean deleteArticleById(Long id, String userName) {
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andNameEqualTo(userName);
-        //TODO 增加安全检查，防止userName不存在而发生错误
-        User user = userMapper.selectByExample(userExample).get(0);
-
-        ArticleUserExample articleUserExample = new ArticleUserExample();
-        articleUserExample.createCriteria().andArticle_idEqualTo(id);
-        if (articleUserMapper.selectByExample(articleUserExample).get(0).getUser_id() == user.getId()) {
-            articleMapper.deleteByPrimaryKey(id);
+    public boolean deleteArticleById(Long articleId, String userName) {
+        Article article = articleMapper.selectByPrimaryKey(articleId);
+        if (article.getUser_name() == userName) {
+            articleMapper.deleteByPrimaryKey(articleId);
             return true;
         } else {
             return false;
@@ -152,24 +134,18 @@ public class ArticleServiceImpl implements ArticleService {
      * @param articleDTO
      * @return boolean
      * @implNote 仅仅更新tbl_article_info 表的数据，其他表的数据更新需要调用其他接口
+     * 管理员无法修改别人的文章
      */
     @Override
     @Transactional
     public boolean updateArticle(Long articleId, ArticleDTO articleDTO, String userName) {
         //检查用户是否有权修改文章
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andNameEqualTo(userName);
-        User user = userMapper.selectByExample(userExample).get(0);
+        Article article = articleMapper.selectByPrimaryKey(articleId);
 
-        ArticleUserExample articleUserExample = new ArticleUserExample();
-        articleUserExample.createCriteria().andArticle_idEqualTo(articleId);
-        if (articleUserMapper.selectByExample(articleUserExample).get(0).getUser_id() != user.getId()) {
+        //TODO 检测article是否存在与检查用户是否为创建者 应不应该 在同一个地方进行
+        if (article == null || article.getUser_name() != userName) {
             return false;
         }
-        //新建一个Article对象
-        Article article = new Article();
-
-        article.setId(articleId);
 
         article.setTraffic(articleDTO.getTraffic());
         article.setModified_by(new Date());
@@ -276,6 +252,8 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setTraffic(article.getTraffic());
         articleDTO.setTitle(article.getSummary());
         articleDTO.setSummary(article.getSummary());
+        articleDTO.setUserName(article.getUser_name());
+        articleDTO.setUserId(article.getUser_id());
 
         //tbl_article_content 信息
         ArticleContentExample articleContentExample = new ArticleContentExample();
@@ -308,20 +286,6 @@ public class ArticleServiceImpl implements ArticleService {
         if(listArticlePicture.size() != 0){
             ArticlePicture articlePicture = listArticlePicture.get(0);
             articleDTO.setPictureUrl(articlePicture.getPicture_url());
-        }
-
-
-        ArticleUserExample articleUserExample = new ArticleUserExample();
-        articleUserExample.createCriteria().andArticle_idEqualTo(articleId);
-        //tbl_article_user 信息
-        List<ArticleUser> listUser = articleUserMapper.selectByExample(articleUserExample);
-        if(!listUser.isEmpty()) {
-            Long userId = listUser.get(0).getUser_id();
-
-            //TODO 修改为正确的数据类型
-            User user = userMapper.selectByPrimaryKey(userId.intValue());
-
-            articleDTO.setUserName(user.getName());
         }
 
 
