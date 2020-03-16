@@ -10,7 +10,6 @@
     <result column="traffic" jdbcType="INTEGER" property="traffic" />
     <result column="visibillity" jdbcType="INTEGER" property="visibillity" />
     <result column="is_effective" jdbcType="BIT" property="is_effective" />
-    <result column="user_id" jdbcType="BIGINT" property="user_id"/>
     <result column="user_name" jdbcType="VARCHAR" property="user_name"/>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -72,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, create_by, modified_by, summary, title, traffic, visibillity, is_effective
+    id, create_by, modified_by, summary, title, traffic, visibillity, is_effective, user_name
   </sql>
   <select id="selectByExample" parameterType="ml.sansejin.sancolor.entity.ArticleExample" resultMap="BaseResultMap">
     select
@@ -108,10 +107,10 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="ml.sansejin.sancolor.entity.Article" useGeneratedKeys="true">
     insert into tbl_article_info (create_by, modified_by, summary, 
       title, traffic, visibillity, 
-      is_effective)
+      is_effective, user_name)
     values (#{create_by,jdbcType=TIMESTAMP}, #{modified_by,jdbcType=TIMESTAMP}, #{summary,jdbcType=VARCHAR}, 
       #{title,jdbcType=VARCHAR}, #{traffic,jdbcType=INTEGER}, #{visibillity,jdbcType=INTEGER}, 
-      #{is_effective,jdbcType=BIT}), #{user_id, jdbcType=BIGINT}, #{user_name, jdbcType=VARCHAR}
+      #{is_effective,jdbcType=BIT}), #{user_name, jdbcType=VARCHAR}
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="ml.sansejin.sancolor.entity.Article" useGeneratedKeys="true">
     insert into tbl_article_info
@@ -136,9 +135,6 @@
       </if>
       <if test="is_effective != null">
         is_effective,
-      </if>
-      <if test="user_id != null">
-        user_id,
       </if>
       <if test="user_name != null">
         user_name,
@@ -165,9 +161,6 @@
       </if>
       <if test="is_effective != null">
         #{is_effective,jdbcType=BIT},
-      </if>
-      <if test="user_id != null">
-        #{user_id, jdbcType=BIGINT},
       </if>
       <if test="user_name != null">
         #{user_name, jdbcType=VARCHAR},
@@ -201,9 +194,6 @@
       <if test="record.is_effective != null">
         is_effective = #{record.is_effective,jdbcType=BIT},
       </if>
-      <if test="record.user_id != null">
-        user_id = #{record.user_id, jdbcType=BIGINT},
-      </if>
       <if test="record.user_name != null">
         user_name = #{record.user_name, jdbcType=VARCHAR},
       </if>
@@ -222,7 +212,6 @@
       traffic = #{record.traffic,jdbcType=INTEGER},
       visibillity = #{record.visibillity,jdbcType=INTEGER},
       is_effective = #{record.is_effective,jdbcType=BIT},
-      user_id = #{record.user_id, jdbcType=BIGINT},
       user_name = #{record.user_name, jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -252,9 +241,6 @@
       <if test="is_effective != null">
         is_effective = #{is_effective,jdbcType=BIT},
       </if>
-      <if test="user_id != null">
-        user_id = #{user_id,jdbcType=BIGINT},
-      </if>
       <if test="user_name != null">
         user_name = #{user_name,jdbcType=VARCHAR},
       </if>
@@ -270,7 +256,6 @@
       traffic = #{traffic,jdbcType=INTEGER},
       visibillity = #{visibillity,jdbcType=INTEGER},
       is_effective = #{is_effective,jdbcType=BIT},
-      user_id = #{user_id, jdbcType=BIGINT},
       user_name = #{user_name, jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

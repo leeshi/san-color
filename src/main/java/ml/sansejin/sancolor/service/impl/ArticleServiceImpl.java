@@ -36,9 +36,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Resource
     private ArticleCategoryMapper articleCategoryMapper;
 
-    @Resource
-    private UserMapper userMapper;
-
     /**
      * 添加一篇文章，主要与其他表之间的关系
      * @param articleDTO
@@ -92,7 +89,7 @@ public class ArticleServiceImpl implements ArticleService {
             articlePicture.setAtricle_id(article.getId());
             articlePicture.setPicture_url(articleDTO.getPictureUrl());
 
-            articlePictureMapper.insert(articlePicture);
+            articlePictureMapper.insertSelective(articlePicture);
 
         }
 
@@ -120,7 +117,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public boolean deleteArticleById(Long articleId, String userName) {
         Article article = articleMapper.selectByPrimaryKey(articleId);
-        if (article.getUser_name() == userName) {
+        if (article.getUser_name().equals(userName)) {
             articleMapper.deleteByPrimaryKey(articleId);
             return true;
         } else {
@@ -143,28 +140,30 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleMapper.selectByPrimaryKey(articleId);
 
         //TODO 检测article是否存在与检查用户是否为创建者 应不应该 在同一个地方进行
-        if (article == null || article.getUser_name() != userName) {
+        if (article == null || !article.getUser_name().equals(userName)) {
             return false;
         }
 
-        article.setTraffic(articleDTO.getTraffic());
+        //TODO get时自动修改traffic
         article.setModified_by(new Date());
-        article.setCreate_by(articleDTO.getCreateBy());
         article.setTitle(articleDTO.getTitle());
         article.setVisibillity(articleDTO.getVisibillity());
         article.setSummary(articleDTO.getSummary());
-        //插入到tbl_article_info中
+        //插入到tbl_article_info中，如果DTO中没有的info就不需要修改
         articleMapper.updateByPrimaryKeySelective(article);
 
-        //新建一个tbl_article_content
-        ArticleContent articleContent = new ArticleContent();
-        articleContent.setRaw_content(articleDTO.getContent());
-        articleContent.setParsed_content(MarkdownUtil.parseMarkdown(articleDTO.getContent()));
+        //如果DTO中content为null，表示不需要修改content
+        if (articleDTO.getContent() != null) {
+            ArticleContent articleContent = new ArticleContent();
+            articleContent.setRaw_content(articleDTO.getContent());
+            articleContent.setParsed_content(MarkdownUtil.parseMarkdown(articleDTO.getContent()));
 
-        ArticleContentExample articleContentExample = new ArticleContentExample();
-        articleContentExample.createCriteria().andArticle_idEqualTo(articleId);
+            ArticleContentExample articleContentExample = new ArticleContentExample();
+            articleContentExample.createCriteria().andArticle_idEqualTo(articleId);
 
-        articleContentMapper.updateByExampleSelective(articleContent, articleContentExample);
+            articleContentMapper.updateByExampleSelective(articleContent, articleContentExample);
+        }
+
         return true;
     }
 
@@ -253,7 +252,6 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setTitle(article.getSummary());
         articleDTO.setSummary(article.getSummary());
         articleDTO.setUserName(article.getUser_name());
-        articleDTO.setUserId(article.getUser_id());
 
         //tbl_article_content 信息
         ArticleContentExample articleContentExample = new ArticleContentExample();

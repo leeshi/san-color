@@ -18,7 +18,6 @@ public class ArticleDTO {
 
 
     /*//tbl_article_user基础字段 */
-    private Long userId;
     private String userName;
 
     //tbl_article_content基础字段
@@ -117,13 +116,5 @@ public class ArticleDTO {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 }
