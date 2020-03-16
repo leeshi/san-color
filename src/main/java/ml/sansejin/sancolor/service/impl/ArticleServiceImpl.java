@@ -31,9 +31,6 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticlePictureMapper articlePictureMapper;
 
     @Resource
-    private ArticleUserMapper articleUserMapper;
-
-    @Resource
     private ArticleContentMapper articleContentMapper;
 
     @Resource
